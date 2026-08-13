@@ -58,6 +58,7 @@ services:
       FLARUM_ADMIN_PASSWORD: ${FLARUM_ADMIN_PASSWORD}
       FLARUM_ADMIN_EMAIL: ${FLARUM_ADMIN_EMAIL}
       FLARUM_TITLE: ${FLARUM_TITLE}
+      FLARUM_LOCALE: ${FLARUM_LOCALE:-uk}
     volumes:
       - flarum_app:/flarum
       - ./flarum/extend.php:/flarum/extend.php

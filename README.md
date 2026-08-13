@@ -78,6 +78,32 @@ npm run prod         # мініфікована збірка
 (лежить у git, тому сайт працює одразу після клону). `npm run prod` дає `site.min.css`;
 щоб тема його підхопила, треба ввімкнути `production: true` у `pisochnica.yaml`.
 
+## Мова
+
+Обидва сайти українською.
+
+**Grav** — блок `languages` у `grav/user/config/system.yaml`: `supported: [uk]`.
+Один запис вмикає переклади ядра, плагінів і теми, але `include_default_lang: false`
+лишає адреси без префікса `/uk/`, а `include_default_lang_file_extension: false` —
+файли сторінок без суфікса (`default.md`, а не `default.uk.md`).
+Щоб зробити сайт двомовним, дописуємо мову в `supported` і заводимо `default.en.md`.
+
+Рядки теми — `themes/pisochnica/languages/{uk,en}.yaml`, ключі `THEME_PISOCHNICA.*`.
+Мова адмінки береться з профілю користувача (`adminLanguage` в `user/accounts/*.yaml`)
+і перемикається в самій адмінці.
+
+**Flarum** — пакет `flarum-lang/ukrainian`. Він ставиться в образі (`flarum/Dockerfile`),
+а вмикається в БД, тому entrypoint після інсталяції робить `extension:enable`
+і пише `default_locale` зі змінної `FLARUM_LOCALE` (типово `uk`). Тобто після
+`docker compose down -v` українська повертається сама.
+
+Вручну те саме:
+
+```powershell
+docker compose exec -u www-data flarum php flarum extension:enable flarum-lang-ukrainian
+docker compose exec -u www-data flarum php flarum cache:clear
+```
+
 ## Що не в git і як відновити
 
 `grav/user/plugins/` і `grav/user/themes/quark2/` — це ~3900 файлів з образу
@@ -93,7 +119,7 @@ docker compose exec grav php bin/gpm install devtools -y
 ```powershell
 docker compose logs -f grav flarum      # логи
 docker compose exec grav sh             # shell у Grav
-docker compose exec grav php bin/grav clear-cache
+docker compose exec grav php bin/grav clearcache
 docker compose down                     # зупинити, дані лишаються в томах
 docker compose down -v                  # ЗНЕСТИ разом з томами і БД
 ```

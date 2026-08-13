@@ -49,7 +49,23 @@ EOF
     # інсталяція від імені www-data, щоб config.php і кеш належали веб-серверу
     su -s /bin/sh www-data -c "php /flarum/flarum install --file=/tmp/flarum-install.yml"
     rm -f /tmp/flarum-install.yml
-    echo "[flarum] інсталяція завершена"
+
+    # Мовний пакет лежить в образі (див. Dockerfile), але вмикається він
+    # записом у БД — тому робимо це одразу після інсталяції, поки БД свіжа.
+    LOCALE="${FLARUM_LOCALE:-uk}"
+    if [ "${LOCALE}" = "uk" ]; then
+        su -s /bin/sh www-data -c "php /flarum/flarum extension:enable flarum-lang-ukrainian"
+    fi
+
+    # default_locale інсталятор не вміє задавати — пишемо напряму в settings
+    FLARUM_LOCALE="${LOCALE}" php -r '
+        $pdo = new PDO("mysql:host=".getenv("DB_HOST").";dbname=".getenv("DB_NAME"), getenv("DB_USER"), getenv("DB_PASSWORD"));
+        $st = $pdo->prepare("INSERT INTO settings (`key`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)");
+        $st->execute(["default_locale", getenv("FLARUM_LOCALE")]);
+    '
+
+    su -s /bin/sh www-data -c "php /flarum/flarum cache:clear"
+    echo "[flarum] інсталяція завершена, мова інтерфейсу: ${LOCALE}"
 fi
 
 exec "$@"

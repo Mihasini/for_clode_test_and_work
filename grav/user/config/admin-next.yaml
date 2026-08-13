@@ -1,0 +1,10 @@
+ui:
+  branding:
+    mode: default
+    text: Grav
+    logoLight: ''
+    logoDark: ''
+    title: ''
+    subtitle: ''
+    showPoweredBy: true
+    favicon: ''

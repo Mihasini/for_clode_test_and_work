@@ -4,6 +4,20 @@ home:
 pages:
   theme: pisochnica
 
+# Сайт одномовний, українською. Один запис у supported вмикає переклади
+# ядра (system/languages/uk.yaml), плагінів і теми, але не змушує
+# перейменовувати сторінки й не додає /uk/ в адреси — за це відповідають
+# два include_* нижче. Щоб зробити сайт двомовним, достатньо дописати
+# другу мову в supported і завести файли на кшталт default.en.md.
+languages:
+  supported:
+    - uk
+  default_lang: uk
+  include_default_lang: false
+  include_default_lang_file_extension: false
+  translations: true
+  translations_fallback: true
+
 cache:
   enabled: true
   check:

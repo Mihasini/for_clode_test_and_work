@@ -36,6 +36,7 @@ RUN sed -ri 's!/var/www/html!/flarum/public!g' /etc/apache2/sites-available/000-
     && a2enmod rewrite headers
 
 RUN composer create-project flarum/flarum:"${FLARUM_VERSION}" /flarum --no-dev --prefer-dist \
+    && composer --working-dir=/flarum require flarum-lang/ukrainian \
     && chown -R www-data:www-data /flarum
 
 COPY docker-entrypoint.sh /usr/local/bin/flarum-entrypoint
