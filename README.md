@@ -60,6 +60,24 @@ docker compose exec grav php bin/plugin api keys:generate -u admin -N "name" -n
 Потрібен Node.js 18+ на хості. `GRAV_API_URL` вказує на **`/api`** без `/v1` —
 версію сервер додає сам.
 
+## Власна тема
+
+`grav/user/themes/pisochnica/` — каркас від `devtools` на Tailwind 3 (+ forms,
+typography, Alpine.js). Активована в `grav/user/config/system.yaml`.
+
+Стилі збираються **на хості**, бо Node.js у контейнері немає:
+
+```powershell
+cd grav\user\themes\pisochnica
+npm install          # один раз
+npm run watch        # під час роботи над темою
+npm run prod         # мініфікована збірка
+```
+
+Джерело — `css/site.css` і класи в `templates/**/*.twig`; результат — `dist/css/site.css`
+(лежить у git, тому сайт працює одразу після клону). `npm run prod` дає `site.min.css`;
+щоб тема його підхопила, треба ввімкнути `production: true` у `pisochnica.yaml`.
+
 ## Що не в git і як відновити
 
 `grav/user/plugins/` і `grav/user/themes/quark2/` — це ~3900 файлів з образу

@@ -1,0 +1,45 @@
+name: Pisochnica
+slug: pisochnica
+type: theme
+version: 0.1.0
+description: Custom theme for the Pisochnica site
+icon: rebel
+author:
+  name: Misha
+  email: misha707070@gmail.com
+homepage: https://github.com/misha707070/grav-theme-pisochnica
+demo: http://demo.yoursite.com
+keywords: grav, theme, etc
+bugs: https://github.com/misha707070/grav-theme-pisochnica/issues
+readme: https://github.com/misha707070/grav-theme-pisochnica/blob/develop/README.md
+license: MIT
+
+compatibility:
+  grav: ['2.0']
+
+dependencies:
+  - { name: grav, version: '>=2.0.0' }
+
+form:
+    validation: loose
+    fields:
+        dropdown.enabled:
+            type: toggle
+            label: Dropdown in Menu
+            highlight: 1
+            default: 1
+            options:
+                1: PLUGIN_ADMIN.ENABLED
+                0: PLUGIN_ADMIN.DISABLED
+            validate:
+                type: bool
+        production:
+            type: toggle
+            label: Production Mode
+            highlight: 1
+            default: 1
+            options:
+                1: PLUGIN_ADMIN.ENABLED
+                0: PLUGIN_ADMIN.DISABLED
+            validate:
+                type: bool
