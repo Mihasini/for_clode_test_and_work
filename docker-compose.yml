@@ -1,0 +1,94 @@
+name: pisochnica
+
+services:
+  # Reverse-proxy: роздає обидва сайти за іменами на одному 80-му порту
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    environment:
+      GRAV_HOST: ${GRAV_HOST}
+      FLARUM_HOST: ${FLARUM_HOST}
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - grav
+      - flarum
+
+  # Grav 2.x — flat-file CMS, бази даних не потребує
+  grav:
+    build:
+      context: ./grav
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+        GRAV_VERSION: ${GRAV_VERSION}
+    restart: unless-stopped
+    ports:
+      # прямий доступ повз Caddy — для REST API, MCP і curl,
+      # щоб не залежати від резолву *.localhost поза браузером
+      - "8080:80"
+    volumes:
+      # редагуємо руками, лежить у git
+      - ./grav/user:/var/www/html/user
+      # генерується автоматично — тримаємо в томах, а не на Windows-ФС
+      - grav_cache:/var/www/html/cache
+      - grav_tmp:/var/www/html/tmp
+      - grav_logs:/var/www/html/logs
+      - grav_images:/var/www/html/images
+      - grav_backup:/var/www/html/backup
+
+  # Flarum — форум, працює на MariaDB
+  flarum:
+    build:
+      context: ./flarum
+      args:
+        PHP_VERSION: ${PHP_VERSION}
+        FLARUM_VERSION: ${FLARUM_VERSION}
+    restart: unless-stopped
+    environment:
+      FORUM_URL: http://${FLARUM_HOST}
+      DB_HOST: mariadb
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      FLARUM_ADMIN_USER: ${FLARUM_ADMIN_USER}
+      FLARUM_ADMIN_PASSWORD: ${FLARUM_ADMIN_PASSWORD}
+      FLARUM_ADMIN_EMAIL: ${FLARUM_ADMIN_EMAIL}
+      FLARUM_TITLE: ${FLARUM_TITLE}
+    volumes:
+      - flarum_app:/flarum
+      - ./flarum/extend.php:/flarum/extend.php
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  mariadb:
+    image: mariadb:11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: ${DB_NAME}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+volumes:
+  grav_cache:
+  grav_tmp:
+  grav_logs:
+  grav_images:
+  grav_backup:
+  flarum_app:
+  mariadb_data:
+  caddy_data:
+  caddy_config:

@@ -1,0 +1,6 @@
+# shell-скрипти виконуються в Linux-контейнерах — тільки LF,
+# інакше CRLF ламає shebang ("bad interpreter")
+*.sh text eol=lf
+docker-entrypoint.sh text eol=lf
+Dockerfile text eol=lf
+Caddyfile text eol=lf

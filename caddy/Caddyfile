@@ -1,0 +1,13 @@
+{
+	# локальний стенд: автовидача TLS-сертифікатів не потрібна
+	auto_https off
+	admin off
+}
+
+http://{$GRAV_HOST} {
+	reverse_proxy grav:80
+}
+
+http://{$FLARUM_HOST} {
+	reverse_proxy flarum:80
+}

@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "grav": {
+      "command": "npx",
+      "args": ["-y", "grav-mcp"],
+      "env": {
+        "GRAV_API_URL": "http://127.0.0.1:8080/api",
+        "GRAV_API_KEY": "grav_PUT-YOUR-KEY-HERE"
+      }
+    }
+  }
+}
