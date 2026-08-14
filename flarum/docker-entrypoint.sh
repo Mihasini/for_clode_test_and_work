@@ -57,12 +57,40 @@ EOF
         su -s /bin/sh www-data -c "php /flarum/flarum extension:enable flarum-lang-ukrainian"
     fi
 
-    # default_locale інсталятор не вміє задавати — пишемо напряму в settings
-    FLARUM_LOCALE="${LOCALE}" php -r '
-        $pdo = new PDO("mysql:host=".getenv("DB_HOST").";dbname=".getenv("DB_NAME"), getenv("DB_USER"), getenv("DB_PASSWORD"));
-        $st = $pdo->prepare("INSERT INTO settings (`key`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)");
-        $st->execute(["default_locale", getenv("FLARUM_LOCALE")]);
-    '
+    # Решта налаштувань живе в таблиці settings, а інсталятор про них не знає.
+    # Пишемо напряму, щоб після `docker compose down -v` форум піднявся вже
+    # українським і вже в оформленні сайту, без ручних кліків в адмінці.
+    #
+    # Кольори теми задаються саме тут, а не в less/f1monkey.less: Flarum
+    # підставляє їх у LESS як @config-* ще до компіляції і сам рахує похідні.
+    #
+    # PHP читаємо зі stdin: у php -r лапки довелося б екранувати двічі.
+    FLARUM_LOCALE="${LOCALE}" SITE_URL="${SITE_URL:-/}" php <<'PHP'
+<?php
+$pdo = new PDO(
+    "mysql:host=" . getenv("DB_HOST") . ";dbname=" . getenv("DB_NAME") . ";charset=utf8mb4",
+    getenv("DB_USER"),
+    getenv("DB_PASSWORD")
+);
+$st = $pdo->prepare("INSERT INTO settings (`key`, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)");
+
+$site = htmlspecialchars(getenv("SITE_URL"), ENT_QUOTES);
+
+foreach ([
+    "default_locale"        => getenv("FLARUM_LOCALE"),
+    "theme_dark_mode"       => "0",
+    "theme_colored_header"  => "1",
+    "theme_primary_color"   => "#000000",
+    "theme_secondary_color" => "#000000",
+    "welcome_title"         => "Пісочниця",
+    "welcome_message"       => "Форум сайту: теми, шаблони, збірка й усе, що навколо. Реєструйтеся й питайте.",
+    // Виводиться першим у <body>, перед #app — смужка «на сайт».
+    // Стилі до неї — у less/f1monkey.less (.f1-topbar).
+    "custom_header"         => '<div class="f1-topbar"><a href="' . $site . '">← На сайт</a><span>Форум</span></div>',
+] as $key => $value) {
+    $st->execute([$key, $value]);
+}
+PHP
 
     su -s /bin/sh www-data -c "php /flarum/flarum cache:clear"
     echo "[flarum] інсталяція завершена, мова інтерфейсу: ${LOCALE}"

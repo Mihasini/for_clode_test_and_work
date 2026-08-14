@@ -50,6 +50,8 @@ services:
     restart: unless-stopped
     environment:
       FORUM_URL: http://${FLARUM_HOST}
+      # адреса сайту — для смужки «на сайт» у шапці форуму
+      SITE_URL: http://${GRAV_HOST}
       DB_HOST: mariadb
       DB_NAME: ${DB_NAME}
       DB_USER: ${DB_USER}
@@ -62,6 +64,11 @@ services:
     volumes:
       - flarum_app:/flarum
       - ./flarum/extend.php:/flarum/extend.php
+      # оформлення форуму під тему сайту — підключається з extend.php
+      - ./flarum/less:/flarum/less:ro
+      # ті самі woff2, що й на сайті: віддаються як /fonts/*, бо .htaccess
+      # Flarum спершу шукає реальний файл і лише потім переписує на index.php
+      - ./grav/user/themes/f1monkey/fonts:/flarum/public/fonts:ro
     depends_on:
       mariadb:
         condition: service_healthy

@@ -1,0 +1,514 @@
+/*
+ * Вигляд форуму під тему сайту f1monkey: монохром на теплому сірому, велика
+ * типографіка капсом, нуль тіней. Файл підключений із extend.php через
+ * Extend\Frontend('forum')->css(), тому лежить у git і переживає перезбірку.
+ *
+ * Чому саме так, а не через «Custom LESS» в адмінці: те, що зберігається в БД,
+ * зникає після `docker compose down -v` і не читається в діффі.
+ *
+ * Основа кольорів приходить не звідси, а з налаштувань у БД: theme_dark_mode=0,
+ * theme_colored_header=1, theme_primary_color=#000. Flarum підставляє їх у LESS
+ * ще до компіляції і сам рахує похідні (contrast, lighten, fade). Тут ми лише
+ * уточнюємо результат — переважно через CSS-змінні, які ядро оголошує в :root
+ * (див. vendor/flarum/core/less/common/root.less). Це дешевше за перебивання
+ * готових правил: жодного !important і жодної гри зі специфічністю.
+ */
+
+/* Шрифти — ті самі файли, що й на сайті. Тека теми змонтована в public/fonts,
+   тому шляхи абсолютні. Генерується `npm run fonts` у темі f1monkey. */
+@import '_fonts.less';
+
+/* ------------------------------------------------------------------ *
+ * 1. Токени
+ * ------------------------------------------------------------------ */
+
+/* Палітра теми сайту, один в один із tailwind.config.js */
+@f1-carbon:   #000000;
+@f1-paper:    #ffffff;
+@f1-canvas:   #e5e5e5;  // фон сторінки — навмисно не чисто білий
+@f1-canvas-2: #d6d6d6;  // на пів тону темніше: смуги, роздільники, «втоплені» місця
+@f1-mist:     #f3f3f3;
+@f1-graphite: #2f2f2f;
+@f1-slate:    #444444;
+@f1-ash:      #c6c6c6;
+@f1-smoke:    #979797;
+@f1-mint:     #d1ffca;
+@f1-voltage:  #fff100;
+
+@f1-display: 'Oswald Variable', Oswald, Impact, sans-serif;
+@f1-sans:    'Inter Variable', Inter, system-ui, sans-serif;
+@f1-mono:    'JetBrains Mono Variable', ui-monospace, monospace;
+
+:root {
+    /* Поверхні. Глибина йде тільки контрастом: полотно → біла картка →
+       чорний інверсний блок. Тіней у системі немає взагалі. */
+    --body-bg: @f1-canvas;
+    --body-bg-shaded: @f1-canvas-2;
+    --body-bg-light: @f1-mist;
+    --control-bg: @f1-paper;
+    --control-bg-light: @f1-paper;
+    --control-bg-shaded: @f1-mist;
+    --control-color: @f1-carbon;
+
+    /* Текст */
+    --text-color: @f1-carbon;
+    --heading-color: @f1-carbon;
+    --link-color: @f1-carbon;
+    --muted-color: @f1-smoke;
+    --muted-color-light: @f1-ash;
+    --muted-color-dark: @f1-slate;
+    --discussion-title-color: @f1-carbon;
+
+    /* Тіней немає: колір тіні прозорий, тож усі box-shadow ядра гаснуть,
+       не ламаючи розмірів і не вимагаючи полювання по селекторах. */
+    --shadow-color: transparent;
+
+    /* Скруглення зі шкали теми: md 4, lg 8, pill 48 */
+    --border-radius: 8px;
+
+    /* Шапка й герой — той самий інверсний чорний блок, що й підвал сайту */
+    --header-bg: @f1-carbon;
+    --header-color: @f1-paper;
+    --header-control-color: @f1-paper;
+    --header-control-bg: rgba(255, 255, 255, 0.12);
+    --hero-bg: @f1-carbon;
+    --hero-color: @f1-paper;
+
+    /* Кнопки. Звичайна — біла картка з мʼятним наведенням, головна — чорна. */
+    --button-bg: @f1-paper;
+    --button-color: @f1-carbon;
+    --button-bg-hover: @f1-mint;
+    --button-bg-active: @f1-ash;
+    --button-bg-disabled: @f1-mist;
+    --button-primary-bg: @f1-carbon;
+    --button-primary-color: @f1-paper;
+    --button-primary-bg-hover: @f1-graphite;
+    --button-primary-bg-active: @f1-slate;
+    --button-primary-bg-disabled: @f1-smoke;
+
+    /* Небезпечні дії лишаються монохромними: колір тут не інформує, а лякає.
+       Роль бере на себе інверсія — так само, як «важливе» на сайті. */
+    --control-danger-bg: @f1-carbon;
+    --control-danger-color: @f1-paper;
+    --error-color: @f1-carbon;
+
+    /* Акценти: мʼятний — позитив і теги, жовтий — попередження й «зверни увагу» */
+    --alert-bg: @f1-voltage;
+    --alert-color: @f1-carbon;
+    --alert-success-bg: @f1-mint;
+    --alert-success-color: @f1-carbon;
+    --alert-error-bg: @f1-carbon;
+    --alert-error-color: @f1-paper;
+
+    --tag-bg: @f1-mint;
+    --tag-color: @f1-carbon;
+    --badge-bg: @f1-carbon;
+    --badge-color: @f1-paper;
+    --badge-hidden-bg: @f1-smoke;
+
+    --avatar-bg: @f1-slate;
+    --usercard-bg: @f1-carbon;
+    --tooltip-bg: @f1-carbon;
+    --tooltip-color: @f1-paper;
+    --overlay-bg: rgba(0, 0, 0, 0.85);
+
+    --code-bg: @f1-mist;
+    --code-color: @f1-carbon;
+
+    /* Наведення на рядок списку піднімає його з полотна на білу картку */
+    --discussion-list-item-bg-hover: @f1-paper;
+}
+
+/* ------------------------------------------------------------------ *
+ * 2. Типографіка
+ * ------------------------------------------------------------------ */
+
+body,
+.App {
+    font-family: @f1-sans;
+    letter-spacing: -0.02em;
+}
+
+code,
+pre,
+kbd,
+samp,
+.CodeBlock {
+    font-family: @f1-mono;
+    letter-spacing: 0;
+}
+
+/* Дисплейний шрифт — тільки на великому кеглі. Нижче 28px Oswald стає
+   вузьким і сірим, тому службові написи набрані Inter капсом. */
+h1,
+h2,
+.Hero-title,
+.DiscussionPage-title,
+.Header-title {
+    font-family: @f1-display;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 0.95;
+    text-transform: uppercase;
+}
+
+/* Заголовки самих обговорень капсом не робимо: це користувацький текст,
+   довга назва капсом читається гірше. Капс лишається службовим елементам. */
+.DiscussionListItem-title,
+.PostStream .Post-header,
+.Post-body h1,
+.Post-body h2,
+.Post-body h3 {
+    text-transform: none;
+}
+
+.DiscussionListItem-title {
+    font-family: @f1-sans;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+/* Мітки, кнопки, метадані — дрібний капс із розрідженням, як .eyebrow на сайті */
+.Button-label,
+.Badge-icon + .Badge-label,
+.item-terminalPost .DiscussionListItem-info,
+.PostMeta-time,
+.Post-meta,
+.sideNav .Dropdown-toggle,
+.IndexPage-toolbar-view .Button-label,
+.TagLabel {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.Post-body a {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+
+    &:hover {
+        background: @f1-mint;
+        text-decoration: none;
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ * 3. Місток на сайт і шапка
+ * ------------------------------------------------------------------ */
+
+/*
+ * Смужка «на сайт» над шапкою. Розмітка приходить із налаштування
+ * custom_header: Flarum виводить його рядком першим у <body>, перед #app
+ * (views/frontend/forum.blade.php). Це єдине місце, куди можна вставити
+ * власний HTML без збірки JS-розширення.
+ */
+.f1-topbar {
+    align-items: center;
+    background: @f1-carbon;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    color: @f1-smoke;
+    display: flex;
+    font-family: @f1-sans;
+    font-size: 11px;
+    font-weight: 600;
+    gap: 16px;
+    letter-spacing: 0.06em;
+    padding: 8px 16px;
+    text-transform: uppercase;
+
+    a {
+        color: @f1-paper;
+        text-decoration: none;
+
+        &:hover {
+            background: @f1-mint;
+            color: @f1-carbon;
+        }
+    }
+}
+
+/* На телефоні шапка форуму приклеєна до верху екрана і накрила б смужку —
+   там дорогу назад дає бічна шухляда. */
+@media (max-width: 767px) {
+    .f1-topbar {
+        display: none;
+    }
+}
+
+.App-header {
+    border-bottom: 1px solid @f1-carbon;
+}
+
+.Header-title {
+    font-size: 28px;
+}
+
+/* Пошук у чорній шапці: рамка замість заливки — так само, як інверсні
+   поля в підвалі сайту. */
+.Header .Search-input .FormControl {
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 48px;
+    background: transparent;
+    color: @f1-paper;
+
+    &::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    &:focus {
+        border-color: @f1-mint;
+    }
+}
+
+/* ------------------------------------------------------------------ *
+ * 4. Герой
+ * ------------------------------------------------------------------ */
+
+.Hero {
+    border-bottom: 1px solid @f1-carbon;
+    padding: 64px 0;
+    text-align: left;
+}
+
+.Hero-title {
+    font-size: 48px;
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .Hero-title {
+        font-size: 80px;
+    }
+}
+
+.Hero-subtitle {
+    font-family: @f1-sans;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    margin-top: 16px;
+    max-width: 640px;
+    opacity: 0.75;
+}
+
+/* ------------------------------------------------------------------ *
+ * 5. Список обговорень
+ * ------------------------------------------------------------------ */
+
+.DiscussionListItem {
+    border-bottom: 1px solid @f1-ash;
+
+    &:hover .DiscussionListItem-content {
+        background: @f1-paper;
+    }
+}
+
+.DiscussionListItem-content {
+    padding: 20px 16px;
+    transition: background 0.12s linear;
+}
+
+/* Лічильник відповідей — чорний квадратик замість круглої пігулки */
+.DiscussionListItem-count {
+    background: @f1-carbon;
+    border-radius: 4px;
+    color: @f1-paper;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.DiscussionListItem.unread .DiscussionListItem-count {
+    background: @f1-voltage;
+    color: @f1-carbon;
+}
+
+.DiscussionListItem-info {
+    font-size: 12px;
+}
+
+/* ------------------------------------------------------------------ *
+ * 6. Обговорення й пости
+ * ------------------------------------------------------------------ */
+
+/*
+ * Шапка обговорення — той самий чорний блок, що й привітання, але назву
+ * набирає Inter: у героя вона теж має клас .Hero-title, а дисплейний
+ * Oswald капсом з чужого тексту робить кричалку.
+ */
+.DiscussionHero {
+    border-bottom: 1px solid @f1-carbon;
+    padding: 40px 0 24px;
+}
+
+.DiscussionHero .Hero-title,
+.DiscussionHero .DiscussionHero-items {
+    text-align: left;
+}
+
+.DiscussionHero .Hero-title {
+    font-family: @f1-sans;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    text-transform: none;
+}
+
+@media (min-width: 768px) {
+    .DiscussionHero .Hero-title {
+        font-size: 40px;
+    }
+}
+
+.PostStream .Post {
+    border-bottom: 1px solid @f1-ash;
+    padding-bottom: 24px;
+}
+
+.PostStream .Post:last-child {
+    border-bottom: 0;
+}
+
+.Post-body {
+    font-size: 16px;
+    line-height: 1.6;
+
+    blockquote,
+    .UserMention,
+    .PostMention {
+        border-left: 3px solid @f1-carbon;
+        padding-left: 16px;
+    }
+
+    pre,
+    code {
+        border-radius: 4px;
+    }
+}
+
+/* Аватари квадратні зі скругленням — у системі немає жодного кола */
+.Avatar {
+    border-radius: 8px;
+}
+
+.UserCard {
+    border-radius: 8px;
+}
+
+/* ------------------------------------------------------------------ *
+ * 7. Контроли
+ * ------------------------------------------------------------------ */
+
+.Button {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+/* Кнопка-«привид»: рамка 1.5px, як .btn-ghost на сайті */
+.Button--link {
+    border-radius: 4px;
+}
+
+.FormControl,
+.Search-input .FormControl {
+    border: 1px solid @f1-slate;
+    border-radius: 4px;
+
+    &:focus {
+        border-color: @f1-carbon;
+        outline: 2px solid @f1-mint;
+        outline-offset: 0;
+    }
+}
+
+.Dropdown-menu {
+    border: 1px solid @f1-carbon;
+    border-radius: 8px;
+}
+
+.Modal-content {
+    border: 1px solid @f1-carbon;
+    border-radius: 8px;
+}
+
+.Composer {
+    border-top: 1px solid @f1-carbon;
+}
+
+/* ------------------------------------------------------------------ *
+ * 8. Теги
+ * ------------------------------------------------------------------ */
+
+/* Теги — мʼятні пігулки, як .tag на сайті. Кольорові теги (у них колір
+   приходить із адмінки інлайном) не чіпаємо: там колір несе сенс. */
+.TagLabel:not(.colored):not(.TagLabel--colored) {
+    border-radius: 48px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 0.25em 0.75em;
+}
+
+.TagTile {
+    border-radius: 8px;
+}
+
+/* ------------------------------------------------------------------ *
+ * 9. Дрібниці
+ * ------------------------------------------------------------------ */
+
+/* Смуга над списком: сортування, «позначити прочитаним», вигляд */
+.IndexPage-toolbar {
+    border-bottom: 1px solid @f1-carbon;
+    font-size: 12px;
+    padding-bottom: 8px;
+}
+
+.IndexPage-toolbar .Dropdown-toggle {
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* Бічне меню: активний пункт позначаємо заливкою, а не кольором тексту —
+   так стан не залежить від порядку правил у зібраному CSS. */
+.sideNav .Dropdown-menu > li > a,
+.IndexPage-nav .item-nav a {
+    border-radius: 4px;
+}
+
+.sideNav .active > a,
+.IndexPage-nav .active > a {
+    background: @f1-carbon;
+    color: @f1-paper;
+}
+
+/* Сповіщення й повідомлення форми */
+.Alert {
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+.Notification {
+    border-bottom: 1px solid @f1-ash;
+}
+
+.Notification.unread {
+    background: @f1-mint;
+}
+
+/* ------------------------------------------------------------------ *
+ * 10. Нуль тіней
+ * ------------------------------------------------------------------ */
+
+/* --shadow-color гасить тіні ядра, але кілька місць задають колір напряму.
+   Тут страхуємось глобально: у цій системі тіні немає ніде. */
+.App,
+.App-header,
+.Dropdown-menu,
+.Modal-content,
+.UserCard,
+.Composer,
+.Button,
+.FormControl,
+.Search-results,
+.PostPreview,
+.TagTile {
+    box-shadow: none;
+}
