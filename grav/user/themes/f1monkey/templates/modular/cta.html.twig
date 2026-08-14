@@ -1,0 +1,27 @@
+{#
+    Заклик до дії — інверсний чорний блок. Секція не має рамки знизу:
+    далі йде такий самий чорний підвал, лінія між ними була б непомітна.
+#}
+<section class="mx-auto max-w-content px-6 py-16 md:py-24">
+    <div class="card-inverted">
+        {% if page.header.eyebrow %}
+            <p class="eyebrow">{{ page.header.eyebrow|e }}</p>
+        {% endif %}
+
+        <h2 class="mt-6 max-w-3xl break-words font-display uppercase text-display-sm md:text-display">
+            {{ page.header.heading|default(page.title)|e }}
+        </h2>
+
+        {% if page.header.lead %}
+            <p class="mt-6 max-w-xl text-lg text-ash">{{ page.header.lead|e }}</p>
+        {% endif %}
+
+        {% if page.header.buttons %}
+            <div class="mt-10 flex flex-wrap gap-4">
+                {% for button in page.header.buttons %}
+                    <a href="{{ button.url|e }}" class="btn-inverted">{{ button.text|e }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>

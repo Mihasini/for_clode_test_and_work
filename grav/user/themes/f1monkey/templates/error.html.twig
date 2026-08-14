@@ -1,0 +1,17 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <div class="max-w-3xl">
+        <p class="eyebrow">{{ 'THEME_F1MONKEY.ERROR'|t }}</p>
+
+        <h1 class="mt-4 font-display uppercase text-display md:text-display-xl">
+            {{ page.header.http_response_code|default(404) }}
+        </h1>
+
+        <div class="prose mt-8">
+            {{ page.content|raw }}
+        </div>
+
+        <a href="{{ home_url|e }}" class="btn-solid mt-10">{{ 'THEME_F1MONKEY.HOME'|t }}</a>
+    </div>
+{% endblock %}

@@ -1,0 +1,21 @@
+{#
+    Простий текстовий модуль: заголовок і markdown у prose.
+    Потрібен, щоб не заводити окремий шаблон під кожен абзац на головній.
+#}
+<section class="border-b border-ash">
+    <div class="mx-auto max-w-content px-6 py-16 md:py-24">
+        <div class="max-w-3xl">
+            {% if page.header.eyebrow %}
+                <p class="eyebrow">{{ page.header.eyebrow|e }}</p>
+            {% endif %}
+
+            {% if page.header.heading|default(page.title) %}
+                <h2 class="mt-4 break-words font-display uppercase text-3xl md:text-display-sm">
+                    {{ page.header.heading|default(page.title)|e }}
+                </h2>
+            {% endif %}
+
+            <div class="prose mt-8">{{ page.content|raw }}</div>
+        </div>
+    </div>
+</section>

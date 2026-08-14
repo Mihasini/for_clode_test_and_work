@@ -1,0 +1,15 @@
+title: Запис
+'@extends':
+    type: default
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      fields:
+        content:
+          fields:
+            header.author:
+              type: text
+              label: Автор
+              help: Якщо порожній — береться author.name із site.yaml

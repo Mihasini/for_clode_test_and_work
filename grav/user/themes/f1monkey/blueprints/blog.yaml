@@ -1,0 +1,20 @@
+title: Журнал
+'@extends':
+    type: default
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      fields:
+        content:
+          fields:
+            header.eyebrow:
+              type: text
+              label: Надзаголовок
+
+            header.lead:
+              type: textarea
+              label: Лід
+              rows: 3
+              help: Один абзац під заголовком, над списком записів

@@ -1,0 +1,85 @@
+{% extends 'partials/base.html.twig' %}
+
+{#
+    Сусідів беремо з колекції блогу, а не через page.prevSibling: сусіди
+    сторінки йдуть за порядком тек, а колекція — за датою. Другий аргумент
+    вимикає пагінацію, інакше на другій сторінці списку сусіди обірвалися б.
+
+    Імена методів тут читаються навпаки: всередині Grav зсув рахується
+    як «index -= direction», тож nextSibling бере елемент вище за списком.
+    Список іде від новіших до старіших — виходить, next це новіший запис.
+
+    На краях списку сусіда немає, але Grav повертає не null, а саму колекцію.
+    Вона правдива в if, тому далі перевіряємо не об'єкт, а його адресу.
+#}
+{% set siblings = page.parent.collection('content', false) %}
+{% set newer = siblings.nextSibling(page.path) %}
+{% set older = siblings.prevSibling(page.path) %}
+
+{% block content %}
+    <article>
+        <header class="max-w-4xl">
+            <p class="eyebrow">
+                <time datetime="{{ page.date|date('Y-m-d') }}">{{ page.date|date('d.m.Y') }}</time>
+                · {{ page.header.author|default(site.author.name)|e }}
+            </p>
+
+            <h1 class="mt-4 break-words font-display uppercase text-display-sm md:text-display">
+                {{ page.title|e }}
+            </h1>
+
+            {% if page.taxonomy.tag %}
+                <p class="mt-8 flex flex-wrap gap-2">
+                    {% for tag in page.taxonomy.tag %}
+                        <a href="{{ page.parent.url }}/tag{{ config.system.param_sep }}{{ tag|url_encode }}" class="tag">
+                            {{ tag|e }}
+                        </a>
+                    {% endfor %}
+                </p>
+            {% endif %}
+        </header>
+
+        {% set cover = page.media.images|first %}
+        {% if cover %}
+            {# Обкладинка — просто перше зображення в теці запису, окремого поля не заводимо #}
+            <figure class="mt-12 overflow-hidden rounded-card md:rounded-card-lg">
+                {{ cover.cropZoom(1200, 600).html(page.title, '', 'w-full')|raw }}
+            </figure>
+        {% endif %}
+
+        {# max-w-3xl тримає рядок читабельним: на 1200px текст розповзся б удвічі ширше за норму #}
+        <div class="prose mt-12 max-w-3xl">
+            {{ page.content|raw }}
+        </div>
+    </article>
+
+    <nav class="mt-20 border-t border-ash pt-8" aria-label="{{ 'THEME_F1MONKEY.POST_NAV'|t }}">
+        <div class="grid gap-6 md:grid-cols-2">
+            <div>
+                {% if newer.url %}
+                    <a href="{{ newer.url|e }}" class="group block">
+                        <span class="eyebrow">← {{ 'THEME_F1MONKEY.NEWER_POST'|t }}</span>
+                        <span class="mt-2 block font-sans text-lg font-semibold uppercase tracking-text group-hover:bg-mint">
+                            {{ newer.title|e }}
+                        </span>
+                    </a>
+                {% endif %}
+            </div>
+
+            <div class="md:text-right">
+                {% if older.url %}
+                    <a href="{{ older.url|e }}" class="group block">
+                        <span class="eyebrow">{{ 'THEME_F1MONKEY.OLDER_POST'|t }} →</span>
+                        <span class="mt-2 block font-sans text-lg font-semibold uppercase tracking-text group-hover:bg-mint">
+                            {{ older.title|e }}
+                        </span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <p class="mt-10">
+            <a href="{{ page.parent.url|e }}" class="btn-ghost">{{ 'THEME_F1MONKEY.ALL_POSTS'|t }}</a>
+        </p>
+    </nav>
+{% endblock %}

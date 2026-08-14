@@ -1,0 +1,23 @@
+{#
+    Ряд цифр дисплейним шрифтом. Карток тут навмисно немає: числа лежать
+    прямо на полотні й розділені лініями — так само, як у зразку.
+#}
+<section class="border-b border-ash">
+    <div class="mx-auto max-w-content px-6 py-16 md:py-24">
+        {% if page.header.eyebrow %}
+            <p class="eyebrow mb-12">{{ page.header.eyebrow|e }}</p>
+        {% endif %}
+
+        <div class="grid gap-10 md:grid-cols-3 md:gap-0 md:divide-x md:divide-ash">
+            {% for stat in page.header.stats %}
+                {# first:pl-0 прибирає відступ у крайньої лівої, бо роздільника перед нею немає #}
+                <div class="md:px-10 md:first:pl-0">
+                    <p class="break-words font-display uppercase text-display-sm md:text-display">
+                        {{ stat.value|e }}
+                    </p>
+                    <p class="eyebrow mt-4">{{ stat.label|e }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

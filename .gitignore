@@ -15,9 +15,9 @@ grav/user/config/**/*-private.php
 grav/user/plugins/
 grav/user/themes/quark2/
 
-# залежності збірки власної теми; зібраний dist/ навпаки тримаємо в git,
+# залежності збірки власних тем; зібраний dist/ навпаки тримаємо в git,
 # щоб сайт працював одразу після клону, без npm
-grav/user/themes/pisochnica/node_modules/
+grav/user/themes/*/node_modules/
 
 # службове
 *.log

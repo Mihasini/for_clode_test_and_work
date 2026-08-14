@@ -1,0 +1,49 @@
+{#
+    Пагінація. Перекриває однойменний шаблон плагіна pagination — звідти ж
+    узятий і API об'єкта (hasPrev/prevUrl, isCurrent, isInDelta, isDeltaBorder).
+    Стрілки лишаємо неклікабельними на краях, а не ховаємо: інакше ряд
+    смикається завширшки при переході на першу чи останню сторінку.
+#}
+{% set pagination = pagination|default(page.collection.params.pagination) %}
+{% set base_url = base_url|default(page.url) %}
+
+{% if pagination|length > 1 %}
+    {% set cell = 'inline-flex h-12 min-w-[3rem] items-center justify-center rounded-md px-3 font-mono text-sm' %}
+
+    <nav class="mt-16 border-t border-ash pt-8" aria-label="{{ 'THEME_F1MONKEY.PAGINATION'|t }}">
+        <ul class="flex flex-wrap items-center justify-center gap-2">
+            <li>
+                {% if pagination.hasPrev %}
+                    <a rel="prev" class="{{ cell }} border-1.5 border-slate transition-colors hover:bg-carbon hover:text-paper"
+                       href="{{ (base_url ~ pagination.params ~ pagination.prevUrl)|replace({'//':'/'})|e }}"
+                       aria-label="{{ 'THEME_F1MONKEY.PREV_PAGE'|t }}">←</a>
+                {% else %}
+                    <span class="{{ cell }} border-1.5 border-ash text-ash" aria-hidden="true">←</span>
+                {% endif %}
+            </li>
+
+            {% for paginate in pagination %}
+                {% if paginate.isCurrent %}
+                    <li><span class="{{ cell }} bg-carbon text-paper" aria-current="page">{{ paginate.number }}</span></li>
+                {% elseif paginate.isInDelta %}
+                    <li>
+                        <a class="{{ cell }} border-1.5 border-slate transition-colors hover:bg-carbon hover:text-paper"
+                           href="{{ (base_url ~ pagination.params ~ paginate.url)|replace({'//':'/'})|e }}">{{ paginate.number }}</a>
+                    </li>
+                {% elseif paginate.isDeltaBorder %}
+                    <li><span class="{{ cell }} text-smoke">…</span></li>
+                {% endif %}
+            {% endfor %}
+
+            <li>
+                {% if pagination.hasNext %}
+                    <a rel="next" class="{{ cell }} border-1.5 border-slate transition-colors hover:bg-carbon hover:text-paper"
+                       href="{{ (base_url ~ pagination.params ~ pagination.nextUrl)|replace({'//':'/'})|e }}"
+                       aria-label="{{ 'THEME_F1MONKEY.NEXT_PAGE'|t }}">→</a>
+                {% else %}
+                    <span class="{{ cell }} border-1.5 border-ash text-ash" aria-hidden="true">→</span>
+                {% endif %}
+            </li>
+        </ul>
+    </nav>
+{% endif %}

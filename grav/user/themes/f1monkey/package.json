@@ -1,0 +1,26 @@
+{
+  "name": "f1monkey",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Збірка стилів теми f1monkey",
+  "scripts": {
+    "fonts": "node scripts/copy-fonts.mjs",
+    "build": "cross-env NODE_ENV=development tailwindcss -i ./css/site.css -o ./dist/css/site.css --postcss",
+    "watch": "cross-env NODE_ENV=development tailwindcss -i ./css/site.css -o ./dist/css/site.css --postcss --watch",
+    "prod": "cross-env NODE_ENV=production tailwindcss -i ./css/site.css -o ./dist/css/site.min.css --postcss"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/oswald": "^5.3.0",
+    "@tailwindcss/forms": "^0.5.3",
+    "@tailwindcss/typography": "^0.5.9",
+    "autoprefixer": "^10.4.13",
+    "cross-env": "^7.0.3",
+    "cssnano": "^8.0.5",
+    "postcss": "^8.4.21",
+    "postcss-import": "^15.1.0",
+    "tailwindcss": "^3.2.6",
+    "tailwindcss-debug-screens": "^2.2.1"
+  }
+}

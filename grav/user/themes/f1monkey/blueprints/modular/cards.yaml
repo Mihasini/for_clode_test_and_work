@@ -1,0 +1,36 @@
+title: Картки
+'@extends':
+    type: modular
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      fields:
+        content:
+          fields:
+            header.eyebrow:
+              type: text
+              label: Надзаголовок
+
+            header.heading:
+              type: text
+              label: Заголовок секції
+              help: Якщо порожній — береться назва сторінки
+
+            header.cards:
+              type: list
+              label: Картки
+              style: vertical
+              fields:
+                .title:
+                  type: text
+                  label: Заголовок
+                .text:
+                  type: textarea
+                  label: Текст
+                  rows: 3
+                .tag:
+                  type: text
+                  label: Тег
+                  help: Не обов'язковий; малює м'ятну пігулку внизу картки

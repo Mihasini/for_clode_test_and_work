@@ -1,0 +1,54 @@
+{#
+    Навігація. Партіал підключається двічі — у білій пігулці на десктопі та
+    в мобільній панелі, — тому вигляд задається ззовні:
+
+    list_class   класи для <ul> верхнього рівня
+    link_class   класи для <a>
+    active_class клас активного пункту
+    mode         dropdown — діти випадають при наведенні (десктоп)
+                 inline   — діти показані вкладеним списком (мобільна панель)
+                 flat     — діти не показуються взагалі
+#}
+{% set list_class = list_class|default('flex items-center gap-1 rounded-pill bg-paper p-2') %}
+{% set link_class = link_class|default('nav-pill') %}
+{% set active_class = active_class|default('is-active') %}
+{% set mode = mode|default(config.theme.dropdown.enabled ? 'dropdown' : 'flat') %}
+
+{% macro item(p, link_class, active_class, mode) %}
+    {% set is_active = p.active or p.activeChild %}
+    {% set children = p.children.visible %}
+    <li class="{{ mode == 'dropdown' and children.count > 0 ? 'group relative' : 'relative' }}">
+        <a href="{{ p.url|e }}" class="{{ link_class }}{% if is_active %} {{ active_class }}{% endif %}"{% if p.active %} aria-current="page"{% endif %}>
+            {{ p.menu|e }}
+        </a>
+
+        {% if children.count > 0 and mode != 'flat' %}
+            {% if mode == 'dropdown' %}
+                <ul class="absolute left-0 top-full z-40 hidden min-w-[14rem] rounded-card bg-paper p-2 group-hover:block group-focus-within:block">
+                    {% for child in children %}
+                        {{ _self.item(child, link_class, active_class, 'flat') }}
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <ul class="ml-6 flex flex-col gap-1 border-l border-ash pl-4">
+                    {% for child in children %}
+                        {{ _self.item(child, link_class, active_class, 'inline') }}
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endif %}
+    </li>
+{% endmacro %}
+
+<ul class="{{ list_class }}">
+    {% for p in pages.children.visible %}
+        {{ _self.item(p, link_class, active_class, mode) }}
+    {% endfor %}
+
+    {# Довільні зовнішні пункти з config/site.yaml — у нас так під'єднаний форум #}
+    {% for mitem in site.menu %}
+        <li>
+            <a href="{{ mitem.url|e }}" class="{{ link_class }}">{{ mitem.text|e }}</a>
+        </li>
+    {% endfor %}
+</ul>

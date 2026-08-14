@@ -2,7 +2,7 @@ home:
   alias: '/home'
 
 pages:
-  theme: pisochnica
+  theme: f1monkey
 
 # Сайт одномовний, українською. Один запис у supported вмикає переклади
 # ядра (system/languages/uk.yaml), плагінів і теми, але не змушує

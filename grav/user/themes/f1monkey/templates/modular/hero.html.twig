@@ -1,0 +1,34 @@
+{#
+    Перший екран. Найбільший кегль на сайті — display-xl (130px), тому
+    break-words обов'язковий: одне довге українське слово інакше вилазить
+    за в'юпорт на телефоні.
+#}
+<section class="border-b border-ash">
+    <div class="mx-auto max-w-content px-6 py-16 md:py-28">
+        {% if page.header.eyebrow %}
+            <p class="eyebrow">{{ page.header.eyebrow|e }}</p>
+        {% endif %}
+
+        <h1 class="mt-6 break-words font-display uppercase text-display md:text-display-xl">
+            {{ page.header.heading|default(page.title)|e }}
+        </h1>
+
+        {% if page.header.lead %}
+            <p class="mt-8 max-w-2xl text-xl text-slate">{{ page.header.lead|e }}</p>
+        {% endif %}
+
+        {% if page.content %}
+            <div class="prose mt-8 max-w-2xl">{{ page.content|raw }}</div>
+        {% endif %}
+
+        {% if page.header.buttons %}
+            <div class="mt-10 flex flex-wrap gap-4">
+                {% for button in page.header.buttons %}
+                    <a href="{{ button.url|e }}" class="{{ button.style == 'ghost' ? 'btn-ghost' : 'btn-solid' }}">
+                        {{ button.text|e }}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+</section>

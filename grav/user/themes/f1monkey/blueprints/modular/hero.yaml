@@ -1,0 +1,44 @@
+title: Перший екран
+'@extends':
+    type: modular
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      fields:
+        content:
+          fields:
+            header.eyebrow:
+              type: text
+              label: Надзаголовок
+              help: Дрібний рядок моноширинним над заголовком
+
+            header.heading:
+              type: text
+              label: Заголовок
+              help: Якщо порожній — береться назва сторінки
+
+            header.lead:
+              type: textarea
+              label: Лід
+              rows: 3
+
+            header.buttons:
+              type: list
+              label: Кнопки
+              style: vertical
+              fields:
+                .text:
+                  type: text
+                  label: Напис
+                .url:
+                  type: text
+                  label: Адреса
+                .style:
+                  type: select
+                  label: Вигляд
+                  default: solid
+                  options:
+                    solid: Чорна заливка
+                    ghost: Рамка

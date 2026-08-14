@@ -1,0 +1,21 @@
+THEME_F1MONKEY:
+    ERROR: 'Помилка!'
+    POWERED_BY: 'Працює на'
+    MENU: 'Меню'
+    CLOSE_MENU: 'Закрити меню'
+    SKIP_TO_CONTENT: 'Перейти до вмісту'
+    HOME: 'Головна'
+    FORUM: 'Форум'
+
+    # Журнал
+    READ_MORE: 'Читати'
+    NO_POSTS: 'Тут поки порожньо.'
+    FILTERED_BY_TAG: 'Записи з тегом'
+    RESET_FILTER: 'Показати всі'
+    PAGINATION: 'Сторінки списку'
+    PREV_PAGE: 'Попередня сторінка'
+    NEXT_PAGE: 'Наступна сторінка'
+    POST_NAV: 'Інші записи'
+    NEWER_POST: 'Новіший запис'
+    OLDER_POST: 'Старіший запис'
+    ALL_POSTS: 'Усі записи'

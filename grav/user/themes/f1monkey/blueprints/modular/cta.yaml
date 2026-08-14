@@ -1,0 +1,37 @@
+title: Заклик до дії
+'@extends':
+    type: modular
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      fields:
+        content:
+          fields:
+            header.eyebrow:
+              type: text
+              label: Надзаголовок
+
+            header.heading:
+              type: text
+              label: Заголовок
+              help: Якщо порожній — береться назва сторінки
+
+            header.lead:
+              type: textarea
+              label: Лід
+              rows: 3
+
+            header.buttons:
+              type: list
+              label: Кнопки
+              style: vertical
+              help: На чорному тлі всі кнопки білі — окремого вигляду тут немає
+              fields:
+                .text:
+                  type: text
+                  label: Напис
+                .url:
+                  type: text
+                  label: Адреса

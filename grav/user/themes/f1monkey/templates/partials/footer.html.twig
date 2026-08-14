@@ -1,0 +1,27 @@
+{#
+    Підвал — інверсний чорний блок. У системі зразка це єдиний спосіб дати
+    глибину: тіней немає, працює тільки контраст поверхонь.
+#}
+<footer class="bg-carbon text-paper">
+    <div class="mx-auto max-w-content px-6 py-16 md:py-24">
+        <p class="break-words font-display uppercase text-display-sm md:text-display">
+            {{ config.site.title|e }}
+        </p>
+
+        <div class="mt-12 flex flex-col gap-8 border-t border-slate pt-8 md:flex-row md:items-center md:justify-between">
+            <nav aria-label="{{ 'THEME_F1MONKEY.MENU'|t }}">
+                {% include 'partials/navigation.html.twig' with {
+                    list_class: 'flex flex-wrap items-center gap-x-8 gap-y-3',
+                    link_class: 'font-sans text-sm font-medium uppercase tracking-label text-paper transition-colors hover:text-mint',
+                    active_class: 'text-mint',
+                    mode: 'flat'
+                } %}
+            </nav>
+
+            <p class="font-mono text-xs uppercase tracking-label text-smoke">
+                © {{ 'now'|date('Y') }} · {{ 'THEME_F1MONKEY.POWERED_BY'|t }}
+                <a href="https://getgrav.org" class="text-paper underline underline-offset-4 hover:text-mint">Grav</a>
+            </p>
+        </div>
+    </div>
+</footer>

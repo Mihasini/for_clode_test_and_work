@@ -1,0 +1,28 @@
+title: Цифри
+'@extends':
+    type: modular
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      fields:
+        content:
+          fields:
+            header.eyebrow:
+              type: text
+              label: Надзаголовок
+
+            header.stats:
+              type: list
+              label: Показники
+              style: vertical
+              help: Розраховано на три позиції в ряд
+              fields:
+                .value:
+                  type: text
+                  label: Значення
+                  help: Коротко — воно рендериться дисплейним шрифтом у 80px
+                .label:
+                  type: text
+                  label: Підпис

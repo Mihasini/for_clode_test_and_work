@@ -1,0 +1,34 @@
+{#
+    Картка запису в списку. Приймає `item` — сторінку запису.
+    Змінну навмисно не звемо `page`: інакше вона перекрила б глобальну
+    сторінку блогу, і посилання «скинути фільтр» поїхало б у нікуди.
+#}
+<article class="card flex flex-col">
+    <p class="font-mono text-xs uppercase tracking-label text-smoke">
+        <time datetime="{{ item.date|date('Y-m-d') }}">{{ item.date|date('d.m.Y') }}</time>
+    </p>
+
+    <h2 class="mt-6 font-sans text-2xl font-semibold uppercase tracking-text">
+        <a href="{{ item.url|e }}" class="hover:bg-mint">{{ item.title|e }}</a>
+    </h2>
+
+    {% if item.summary %}
+        {# striptags: у картці потрібен рівний текстовий блок, а не розмітка з markdown #}
+        <p class="mt-4 text-slate">{{ item.summary|striptags|trim|e }}</p>
+    {% endif %}
+
+    {% if item.taxonomy.tag %}
+        <p class="mt-6 flex flex-wrap gap-2">
+            {% for tag in item.taxonomy.tag %}
+                <a href="{{ item.parent.url }}/tag{{ config.system.param_sep }}{{ tag|url_encode }}" class="tag">
+                    {{ tag|e }}
+                </a>
+            {% endfor %}
+        </p>
+    {% endif %}
+
+    {# mt-auto притискає кнопку до низу, щоб у сусідніх картках вони збіглися #}
+    <p class="mt-auto pt-8">
+        <a href="{{ item.url|e }}" class="btn-ghost">{{ 'THEME_F1MONKEY.READ_MORE'|t }}</a>
+    </p>
+</article>

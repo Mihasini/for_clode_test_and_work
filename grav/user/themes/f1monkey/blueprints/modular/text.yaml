@@ -1,0 +1,19 @@
+title: Текст
+'@extends':
+    type: modular
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      fields:
+        content:
+          fields:
+            header.eyebrow:
+              type: text
+              label: Надзаголовок
+
+            header.heading:
+              type: text
+              label: Заголовок
+              help: Якщо порожній — береться назва сторінки

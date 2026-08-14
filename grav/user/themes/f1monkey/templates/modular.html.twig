@@ -1,0 +1,15 @@
+{% extends 'partials/base.html.twig' %}
+
+{#
+    Модульна сторінка. Кожен дочірній модуль рендериться власним шаблоном
+    з templates/modular/ і сам відповідає за свої відступи й контейнер:
+    інверсні блоки та роздільники мають бути на всю ширину, тому спільну
+    обгортку max-w-content із базового шаблона тут навмисно знімаємо.
+#}
+{% block body %}
+    <main id="main">
+        {% for module in page.collection() %}
+            {{ module.content|raw }}
+        {% endfor %}
+    </main>
+{% endblock %}

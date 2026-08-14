@@ -1,0 +1,92 @@
+{# Мініфікована збірка існує тільки для CSS (npm run prod), для JS її ніхто не генерує #}
+{% set extension = config.theme.production ? '.min' : '' %}
+{% set html_lang = grav.language.getActive ?: config.system.languages.default_lang ?: 'uk' %}
+<!DOCTYPE html>
+<html lang="{{ html_lang|e }}">
+<head>
+    {% block head %}
+        <meta charset="utf-8" />
+        {# На головній назва сторінки збігається з назвою сайту — не дублюємо #}
+        <title>{% if header.title and header.title != site.title %}{{ header.title|e }} | {% endif %}{{ site.title|e }}</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        {% include 'partials/metadata.html.twig' %}
+
+        <link rel="icon" type="image/png" href="{{ url('theme://images/logo.png')|e }}" />
+        <link rel="canonical" href="{{ page.url(true, true)|e }}" />
+    {% endblock head %}
+
+    {% block stylesheets %}
+        {% do assets.addCss('theme://dist/css/site' ~ extension ~ '.css', 98) %}
+    {% endblock %}
+
+    {% block javascripts %}
+        {# defer обов'язковий: скрипт шукає елементи меню, а в <head> їх ще немає #}
+        {% do assets.addJs('theme://js/main.js', { priority: 98, defer: true }) %}
+    {% endblock %}
+
+    {% block assets deferred %}
+    {{ assets.css()|raw }}
+    {{ assets.js()|raw }}
+    {% endblock %}
+</head>
+<body id="top" class="{{ page.header.body_classes|e }}{{ config.theme.production ? '' : ' debug-screens' }}">
+
+<a class="skip-link" href="#main">{{ 'THEME_F1MONKEY.SKIP_TO_CONTENT'|t }}</a>
+
+{% block header %}
+    <header class="border-b border-ash">
+        <div class="mx-auto flex h-24 max-w-content items-center justify-between gap-6 px-6 md:h-32">
+            <a href="{{ home_url|e }}" class="font-display text-2xl uppercase tracking-display md:text-3xl">
+                {{ config.site.title|e }}
+            </a>
+
+            {% block header_navigation %}
+                {# Десктоп: пункти лежать у білій пігулці на сірому полотні #}
+                <nav class="hidden md:block" aria-label="{{ 'THEME_F1MONKEY.MENU'|t }}">
+                    {% include 'partials/navigation.html.twig' %}
+                </nav>
+
+                <button type="button"
+                        class="btn-ghost px-5 py-2.5 md:hidden"
+                        data-nav-toggle
+                        aria-controls="mobile-nav"
+                        aria-expanded="false">
+                    {{ 'THEME_F1MONKEY.MENU'|t }}
+                </button>
+            {% endblock %}
+        </div>
+    </header>
+
+    {# Мобільна панель. `hidden` знімає JS, `md:hidden` тримає її прихованою на десктопі #}
+    <div id="mobile-nav" data-nav-panel class="fixed inset-0 z-40 hidden overflow-y-auto bg-canvas px-6 py-8 md:hidden">
+        <nav aria-label="{{ 'THEME_F1MONKEY.MENU'|t }}">
+            {# Без `only`: партіалу потрібні pages, config і site з глобального контексту.
+               Активний пункт позначаємо підкресленням, а не кольором: text-carbon
+               програв би text-slate за порядком утиліт у зібраному CSS. #}
+            {% include 'partials/navigation.html.twig' with {
+                list_class: 'flex flex-col gap-2',
+                link_class: 'block font-display text-3xl uppercase tracking-display',
+                active_class: 'underline underline-offset-8',
+                mode: 'inline'
+            } %}
+        </nav>
+    </div>
+{% endblock %}
+
+{% block body %}
+    <main id="main" class="mx-auto max-w-content px-6 py-12 md:py-20">
+        {% block content %}{% endblock %}
+    </main>
+{% endblock %}
+
+{% block footer %}
+    {% include 'partials/footer.html.twig' %}
+{% endblock %}
+
+{% block bottom %}
+    {{ assets.js('bottom')|raw }}
+{% endblock %}
+
+</body>
+</html>

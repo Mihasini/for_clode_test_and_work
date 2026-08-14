@@ -1,0 +1,121 @@
+/* Шрифти згенеровано `npm run fonts` — правити _fonts.css руками не треба */
+@import './_fonts.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    /*
+     * Ті самі токени, що в tailwind.config.js, але під іменами зі зразка.
+     * Потрібні, щоб звірятися з макетом без перекладу назв, і для тих місць,
+     * де утиліти незручні (inline-стилі, сторонні плагіни Grav).
+     */
+    :root {
+        --color-carbon-black: #000000;
+        --color-paper-white: #ffffff;
+        --color-warm-canvas: #e5e5e5;
+        --color-mist-gray: #f3f3f3;
+        --color-graphite: #2f2f2f;
+        --color-slate-gray: #444444;
+        --color-ash-gray: #c6c6c6;
+        --color-smoke-gray: #979797;
+        --color-mint-chip: #d1ffca;
+        --color-voltage-yellow: #fff100;
+
+        --surface-canvas: var(--color-warm-canvas);
+        --surface-card: var(--color-paper-white);
+        --surface-inverted: var(--color-carbon-black);
+
+        --radius-control: 4px;
+        --radius-button: 8px;
+        --radius-card: 24px;
+        --radius-card-lg: 32px;
+        --radius-nav-pill: 48px;
+        --radius-blob: 64px;
+
+        --tracking-display: -0.03em;
+        --tracking-text: -0.02em;
+        --leading-display: 0.9;
+    }
+
+    html {
+        scroll-behavior: smooth;
+        /* Дисплейний шрифт вузький — без цього кирилиця «злипається» на великих кеглях */
+        text-rendering: optimizeLegibility;
+    }
+
+    body {
+        @apply bg-canvas text-carbon font-sans text-base antialiased;
+    }
+
+    /*
+     * Фокус робимо контурним, а не тінню: тіней у цій системі немає.
+     * :focus-visible, щоб рамка не спалахувала на кожен клік мишею.
+     */
+    :focus-visible {
+        @apply outline-none ring-2 ring-carbon ring-offset-2 ring-offset-canvas;
+    }
+
+    ::selection {
+        @apply bg-voltage text-carbon;
+    }
+}
+
+@layer components {
+    /* Основна дія: чорна заливка, radius 8px, padding 16×24 */
+    .btn-solid {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg bg-carbon px-6 py-4
+               font-sans text-sm font-medium uppercase tracking-label text-paper
+               transition-colors hover:bg-graphite;
+    }
+
+    /* Другорядна дія: рамка 1.5px, гострiший radius */
+    .btn-ghost {
+        @apply inline-flex items-center justify-center gap-2 rounded-md border-1.5 border-slate
+               bg-transparent px-6 py-4 font-sans text-sm font-medium uppercase tracking-label
+               text-carbon transition-colors hover:bg-carbon hover:border-carbon hover:text-paper;
+    }
+
+    /* Та сама дія, але всередині чорного інверсного блоку */
+    .btn-inverted {
+        @apply inline-flex items-center justify-center gap-2 rounded-lg bg-paper px-6 py-4
+               font-sans text-sm font-medium uppercase tracking-label text-carbon
+               transition-colors hover:bg-mint;
+    }
+
+    /* Пункт навігації всередині білої пігулки */
+    .nav-pill {
+        @apply inline-flex items-center rounded-pill px-5 py-2.5 font-sans text-sm font-medium
+               uppercase tracking-label text-carbon transition-colors hover:bg-canvas;
+    }
+
+    .nav-pill.is-active {
+        @apply bg-carbon text-paper hover:bg-carbon;
+    }
+
+    .tag {
+        @apply inline-flex items-center rounded-blob bg-mint px-4 py-1.5 font-mono text-xs
+               uppercase tracking-label text-carbon;
+    }
+
+    .card {
+        @apply rounded-card bg-paper p-8 md:rounded-card-lg md:p-12;
+    }
+
+    .card-inverted {
+        @apply rounded-card bg-carbon p-8 text-paper md:rounded-card-lg md:p-12;
+    }
+
+    /* Дрібний підпис-мітка над блоком: моно, капс, розріджений */
+    .eyebrow {
+        @apply font-mono text-xs uppercase tracking-label text-smoke;
+    }
+
+    /* Посилання «пропустити навігацію»: видиме лише з клавіатури */
+    .skip-link {
+        @apply sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50
+               focus:rounded-md focus:bg-carbon focus:px-4 focus:py-3 focus:text-sm
+               focus:uppercase focus:tracking-label focus:text-paper;
+    }
+}

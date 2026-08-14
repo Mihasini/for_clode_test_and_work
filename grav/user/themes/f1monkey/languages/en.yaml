@@ -1,0 +1,21 @@
+THEME_F1MONKEY:
+    ERROR: 'Error!'
+    POWERED_BY: 'Powered by'
+    MENU: 'Menu'
+    CLOSE_MENU: 'Close menu'
+    SKIP_TO_CONTENT: 'Skip to content'
+    HOME: 'Home'
+    FORUM: 'Forum'
+
+    # Blog
+    READ_MORE: 'Read'
+    NO_POSTS: 'Nothing here yet.'
+    FILTERED_BY_TAG: 'Posts tagged'
+    RESET_FILTER: 'Show all'
+    PAGINATION: 'List pages'
+    PREV_PAGE: 'Previous page'
+    NEXT_PAGE: 'Next page'
+    POST_NAV: 'More posts'
+    NEWER_POST: 'Newer post'
+    OLDER_POST: 'Older post'
+    ALL_POSTS: 'All posts'

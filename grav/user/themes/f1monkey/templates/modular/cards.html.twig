@@ -1,0 +1,45 @@
+{#
+    Сітка білих карток на сірому полотні — основний спосіб показати глибину
+    там, де тіней немає. Нумерація («01», «02») моноширинним — прийом зразка:
+    друкарська метадата замість іконок.
+#}
+<section class="border-b border-ash">
+    <div class="mx-auto max-w-content px-6 py-16 md:py-24">
+        {% if page.header.eyebrow %}
+            <p class="eyebrow">{{ page.header.eyebrow|e }}</p>
+        {% endif %}
+
+        {% if page.header.heading|default(page.title) %}
+            <h2 class="mt-4 max-w-3xl break-words font-display uppercase text-3xl md:text-display-sm">
+                {{ page.header.heading|default(page.title)|e }}
+            </h2>
+        {% endif %}
+
+        {% if page.content %}
+            <div class="prose mt-6 max-w-2xl">{{ page.content|raw }}</div>
+        {% endif %}
+
+        <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {% for card in page.header.cards %}
+                <article class="card flex flex-col">
+                    <p class="font-mono text-xs tracking-label text-smoke">
+                        {{ '%02d'|format(loop.index) }}
+                    </p>
+
+                    <h3 class="mt-6 font-sans text-2xl font-semibold uppercase tracking-text">
+                        {{ card.title|e }}
+                    </h3>
+
+                    {% if card.text %}
+                        <p class="mt-4 text-slate">{{ card.text|e }}</p>
+                    {% endif %}
+
+                    {% if card.tag %}
+                        {# mt-auto притискає тег до низу, щоб у сусідніх картках вони збіглися #}
+                        <p class="mt-auto pt-6"><span class="tag">{{ card.tag|e }}</span></p>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </div>
+    </div>
+</section>

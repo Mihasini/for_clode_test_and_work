@@ -1,0 +1,18 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    <article>
+        {% if page.header.eyebrow %}
+            <p class="eyebrow mb-4">{{ page.header.eyebrow|e }}</p>
+        {% endif %}
+
+        {# Дисплейний шрифт не опускаємо нижче 48px — тому мобільний кегль теж display-sm #}
+        <h1 class="break-words font-display uppercase text-display-sm md:text-display">
+            {{ page.title|e }}
+        </h1>
+
+        <div class="prose mt-10 md:mt-16">
+            {{ page.content|raw }}
+        </div>
+    </article>
+{% endblock %}
