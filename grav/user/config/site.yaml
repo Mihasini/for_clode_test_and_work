@@ -4,3 +4,16 @@ author:
   email: 'misha707070@gmail.com'
 metadata:
     description: 'Локальний майданчик на Grav — тестуємо тему, API та наповнення'
+
+# Оголошуємо явно: в ядрі цього ключа немає, а без нього Grav не збирає
+# теги в індекс і посилання /blog/tag:щось віддає порожній список.
+taxonomies:
+    - category
+    - tag
+
+# Форум — окремий сайт на своєму хості, сторінкою Grav він не є. Тому пункт
+# меню додаємо сюди: partials/navigation.html.twig дописує site.menu після
+# звичайних сторінок. Адреса збігається з FLARUM_HOST у .env.
+menu:
+    - text: Форум
+      url: 'http://forum.localhost'
