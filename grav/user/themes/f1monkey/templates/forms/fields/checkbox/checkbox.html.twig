@@ -1,0 +1,65 @@
+{#
+    Чекбокс у стилі теми. Перекриває forms/fields/checkbox/checkbox.html.twig
+    плагіна form (тема має пріоритет над плагіном — той самий прийом, яким уже
+    перекрито partials/pagination.html.twig).
+
+    Причина копії одна й вагома: стоковий шаблон **взагалі не виводить помилок**
+    валідації. З inline_errors: true обов'язкова згода на сторінці «Контакти»
+    провалювалась би мовчки — угорі загальне «перевірте поля», а під галочкою
+    жодного слова.
+
+    Заодно прибрано інлайновий style="display:inline" на лейблі: розкладка тут
+    flex, щоб довгий текст згоди переносився з рівним відступом, а не підлазив
+    під галочку.
+
+    Верхнього лейбла немає — його вимикає display_label: false у полі; сам
+    підпис іде поруч із галочкою.
+#}
+{% extends "forms/field.html.twig" %}
+
+{% block label %}{% endblock %}
+
+{% block input %}
+    {% set id = field.id|default(field.name)|hyphenize %}
+
+    <div class="{{ form_field_wrapper_classes ?: 'form-input-wrapper' }} {{ field.wrapper_classes }}">
+        <div class="flex items-start gap-3">
+            <input
+                name="{{ (scope ~ field.name)|fieldName }}"
+                value="{{ field.value ?? '1' }}"
+                type="checkbox"
+                {% if value == (field.value ?? '1') %} checked="checked" {% endif %}
+
+                {% block input_attributes %}
+                    id="{{ id|e }}"
+                    class="{{ form_field_checkbox_classes }} {{ field.classes }}"
+                    {% if field.disabled or isDisabledToggleable %}disabled="disabled"{% endif %}
+                    {% if field.autofocus in ['on', 'true', 1] %}autofocus="autofocus"{% endif %}
+                    {% if field.novalidate in ['on', 'true', 1] %}novalidate="novalidate"{% endif %}
+                    {% if required %}required="required"{% endif %}
+                    {% if field.tabindex %}tabindex="{{ field.tabindex }}"{% endif %}
+                {% endblock %}
+                />
+
+            <label for="{{ id|e }}" class="{{ form_field_checkbox_label_classes ?: 'inline' }}">
+                {#
+                    markdown(false) — інлайновий режим, без обгортки <p>.
+                    Саме він робить посилання в тексті згоди живими; без
+                    markdown: true у полі текст екранується як є.
+                #}
+                {% if field.markdown %}
+                    {{ field.label|t|markdown(false) }}
+                {% else %}
+                    {{ field.label|t|e }}
+                {% endif %}
+                {% if form_field_required %}<span class="required">*</span>{% endif %}
+            </label>
+        </div>
+
+        {% if inline_errors and errors %}
+            <div class="{{ form_field_inline_error_classes }}">
+                <p class="form-message">{{ errors|first|raw }}</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -73,6 +73,15 @@ services:
       mariadb:
         condition: service_healthy
 
+  # Перехоплювач пошти для стенда: приймає SMTP на 1025, показує листи на 8025.
+  # Назовні не відправляє нічого — локальний сайт не має права слати живим адресатам.
+  # Порт 1025 не публікуємо: Grav ходить до нього всередині мережі Compose за іменем `mailpit`.
+  mailpit:
+    image: axllent/mailpit:latest
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+
   mariadb:
     image: mariadb:11
     restart: unless-stopped

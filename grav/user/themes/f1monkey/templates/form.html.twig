@@ -1,0 +1,59 @@
+{#
+    Сторінка з формою. Ім'я шаблону задає ім'я файлу сторінки: form.md.
+
+    Шаблони плагіна form не копіюємо — вони параметризовані ззовні: усі класи
+    приходять змінними в include. Вигоди дві: розмітка лишається плагінівською
+    (оновлення не конфліктують), а класи живуть у файлі теми — отже Tailwind їх
+    бачить і не викидає зі збірки. Виняток один — forms/fields/checkbox,
+    там стоковий шаблон не виводить помилок валідації взагалі.
+#}
+{% extends 'partials/base.html.twig' %}
+
+{#
+    @tailwindcss/forms фарбує рамку й кільце фокуса синім (#2563eb) — кольору,
+    якого в палітрі немає. Тому focus:border-carbon і focus:ring-carbon явно.
+
+    error_classes передається двома змінними: textarea читає form_errors_classes,
+    решта полів — form_field_inline_error_classes. Це різні змінні в плагіні.
+#}
+{% set input_classes = 'w-full rounded-md border-1.5 border-ash bg-paper px-4 py-3 text-base text-carbon
+                        placeholder:text-smoke focus:border-carbon focus:ring-carbon' %}
+{% set error_classes = 'mt-2 border-l-2 border-voltage pl-3 text-sm text-carbon' %}
+
+{% block content %}
+    <article>
+        {% if page.header.eyebrow %}
+            <p class="eyebrow mb-4">{{ page.header.eyebrow|e }}</p>
+        {% endif %}
+
+        <h1 class="break-words font-display uppercase text-display-sm md:text-display">
+            {{ page.title|e }}
+        </h1>
+
+        <div class="prose mt-10 md:mt-16">
+            {{ page.content|raw }}
+        </div>
+
+        {# Форма — біла картка на полотні: глибина контрастом поверхонь, не тінню #}
+        <div class="card mt-10 max-w-2xl md:mt-16">
+            {% include 'forms/form.html.twig' with {
+                form_outer_classes: 'flex flex-col gap-6',
+
+                form_field_outer_label_classes: 'mb-2 block',
+                form_field_label_classes: 'font-mono text-xs uppercase tracking-label text-slate',
+
+                form_field_input_classes: input_classes,
+                form_field_textarea_classes: input_classes,
+                form_field_checkbox_classes: 'mt-0.5 h-5 w-5 shrink-0 rounded-md border-1.5 border-carbon
+                                              text-carbon focus:ring-carbon',
+                form_field_checkbox_label_classes: 'consent-label text-sm leading-relaxed text-carbon',
+
+                form_field_inline_error_classes: error_classes,
+                form_errors_classes: error_classes,
+
+                form_button_outer_classes: 'mt-2',
+                form_button_classes: 'btn-solid'
+            } %}
+        </div>
+    </article>
+{% endblock %}

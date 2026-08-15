@@ -1,0 +1,11 @@
+# Плагін form. Перекриває дефолти з user/plugins/form/form.yaml.
+#
+# built_in_css вимкнено: assets/form-styles.css плагіна тягне власну палітру
+# (червоні помилки, сірі рамки, тіні під підписом) — усе повз дизайн-систему.
+# Вигляд полів задає тема, класи передаються при include у templates/form.html.twig.
+#
+# inline_css лишається ввімкненим — саме він ховає поле-пастку honeypot
+# інлайновим стилем. Без нього пастка стала б видимою.
+enabled: true
+built_in_css: false
+inline_css: true

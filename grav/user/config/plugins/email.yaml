@@ -1,0 +1,25 @@
+# Пошта стенда. Перекриває дефолти плагіна (user/plugins/email/email.yaml),
+# де стоїть engine: sendmail — а /usr/sbin/sendmail в образі php:8.3-apache немає,
+# тож листи мовчки не йшли б нікуди.
+#
+# Тут усе замикається на контейнер mailpit: він приймає SMTP на 1025 всередині
+# мережі Compose і показує листи на http://127.0.0.1:8025. Назовні не йде нічого.
+# Для бойового сайту міняється тільки блок smtp — і тоді пароль тримаємо поза git.
+enabled: true
+
+mailer:
+  engine: smtp
+  smtp:
+    server: mailpit
+    port: 1025
+    # Mailpit слухає без TLS; verify_peer плагін вимикає сам саме на це значення
+    encryption: none
+
+# Відправник і типовий отримувач листів із форм. Значення — заглушки: усі листи
+# однаково перехоплює Mailpit, тому адреса тут ні на що не впливає. У бойовому
+# проєкті сюди йде справжня пошта власника.
+from: 'noreply@example.com'
+from_name: 'Пісочниця'
+to: 'hello@example.com'
+
+content_type: text/html

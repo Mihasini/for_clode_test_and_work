@@ -1,0 +1,28 @@
+{#
+    Відповідь після відправки форми. Перекриває однойменний шаблон плагіна form
+    (тема має пріоритет), бо стоковий віддає <div class="notices green"> — класи
+    з чужої системи, яких у темі немає, тож блок був би невидимим.
+
+    Логіка повідомлення лишається плагінівською: коли ввімкнено inline_errors,
+    угорі показуємо коротке «перевірте поля», а подробиці йдуть під самими полями.
+#}
+{% if form.message %}
+    {% set inline_errors = form.inline_errors is not null ? form.inline_errors : config.plugins.form.inline_errors(false) %}
+    {# Замість GRAV.FORM.VALIDATION_FAIL: те закінчується двокрапкою, бо в ядрі
+       після нього йшов перелік помилок, а в нас вони під полями #}
+    {% set message = inline_errors and form.messages ? 'THEME_F1MONKEY.FORM_VALIDATION_FAIL'|t : form.message %}
+
+    {#
+        Успіх — інверсний чорний блок: глибина контрастом поверхонь, не тінню.
+        Помилка й попередження — біла картка з жовтим торцем ліворуч, тим самим
+        прийомом, що й помилки під полями. Червоного в палітрі немає.
+    #}
+    {% set tone = form.status == 'success'
+        ? 'bg-carbon text-paper'
+        : 'border-1.5 border-carbon border-l-4 border-l-voltage bg-paper text-carbon' %}
+
+    {# role="status" — щоб екранний читач озвучив відповідь, не перебиваючи користувача #}
+    <div role="status" class="mb-8 rounded-md px-5 py-4 text-sm leading-relaxed {{ tone }}">
+        {{ message|raw }}
+    </div>
+{% endif %}
