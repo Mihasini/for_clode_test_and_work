@@ -1,7 +1,18 @@
 {% extends 'partials/base.html.twig' %}
 
-{% set collection = page.collection() %}
+{#
+    Змінні `query` і `search_results` ставить плагін simplesearch — і лише тоді,
+    коли запит непорожній. Тому наявність `query` і є ознакою режиму пошуку.
+    Пошук налаштований у фронтматері blog.md (route: '@self', filters: ['@self']).
+#}
+{% set searching = query is defined and query %}
+{% set posts = searching ? search_results : page.collection() %}
+
 {% set active_tag = uri.param('tag') %}
+{# Тег живе в самому шляху (/blog/tag:grav), а запит — у query string,
+   тому склеюємо адреси окремо й лишаємо обидва фільтри діяти разом #}
+{% set tag_path = active_tag ? '/tag' ~ config.system.param_sep ~ active_tag|url_encode : '' %}
+{% set query_suffix = searching ? '?query=' ~ query|url_encode : '' %}
 
 {% block content %}
     <header class="border-b border-ash pb-10 md:pb-16">
@@ -20,33 +31,77 @@
         {% if page.content %}
             <div class="prose mt-8 max-w-2xl">{{ page.content|raw }}</div>
         {% endif %}
+
+        {#
+            Список тегів збираємо з усіх записів (page.children), а не з колекції:
+            колекцію ядро вже відфільтрувало за активним тегом, і після першого
+            кліку рядок пігулок схлопнувся б до одного тега.
+        #}
+        {% set tags = [] %}
+        {% for post in page.children.published %}
+            {% for tag in post.taxonomy.tag|default([]) %}
+                {% if tag not in tags %}
+                    {% set tags = tags|merge([tag]) %}
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+
+        {% if tags %}
+            {# Саму фільтрацію робить ядро (system.pages.url_taxonomy_filters),
+               від нас — лише адреси виду /blog/tag:grav #}
+            <nav class="mt-8 flex flex-wrap gap-2" aria-label="{{ 'THEME_F1MONKEY.TAG_FILTER'|t }}">
+                <a href="{{ (page.url ~ query_suffix)|e }}" class="tag{{ active_tag ? '' : ' is-active' }}">
+                    {{ 'THEME_F1MONKEY.ALL_TAGS'|t }}
+                </a>
+                {% for tag in tags|sort %}
+                    <a href="{{ (page.url ~ '/tag' ~ config.system.param_sep ~ tag|url_encode ~ query_suffix)|e }}"
+                       class="tag{{ active_tag == tag ? ' is-active' : '' }}"
+                       {% if active_tag == tag %}aria-current="true"{% endif %}>
+                        {{ tag|e }}
+                    </a>
+                {% endfor %}
+            </nav>
+        {% endif %}
+
+        {# Звичайна GET-форма: simplesearch читає і ?query=, і /query:…,
+           тому власний JS для пошуку не потрібен #}
+        <form method="get" action="{{ (page.url ~ tag_path)|e }}" role="search" class="mt-8 flex max-w-xl gap-3">
+            <label for="blog-search" class="sr-only">{{ 'THEME_F1MONKEY.SEARCH'|t }}</label>
+            <input id="blog-search" type="search" name="query" value="{{ query|default('') }}"
+                   placeholder="{{ 'THEME_F1MONKEY.SEARCH_PLACEHOLDER'|t }}"
+                   class="w-full rounded-md border-1.5 border-ash bg-paper px-4 py-3 text-base text-carbon placeholder:text-smoke focus:border-carbon">
+            <button type="submit" class="btn-solid">{{ 'THEME_F1MONKEY.SEARCH_SUBMIT'|t }}</button>
+        </form>
     </header>
 
-    {% if active_tag %}
-        {# Фільтр за тегом вмикає саме ядро (system.pages.url_taxonomy_filters),
-           колекція вже приходить відфільтрованою — нам лишається показати стан
-           і дати вихід. #}
+    {% if searching %}
         <p class="mt-10 flex flex-wrap items-center gap-4 font-mono text-xs uppercase tracking-label">
-            <span class="text-smoke">{{ 'THEME_F1MONKEY.FILTERED_BY_TAG'|t }}</span>
-            <span class="tag">{{ active_tag|e }}</span>
+            <span class="text-smoke">{{ 'THEME_F1MONKEY.SEARCH_FOUND'|t }}: {{ posts.count }}</span>
             <a href="{{ page.url|e }}" class="underline underline-offset-4 hover:bg-mint">
                 {{ 'THEME_F1MONKEY.RESET_FILTER'|t }}
             </a>
         </p>
     {% endif %}
 
-    {% if collection.count %}
+    {% if posts.count %}
         <div class="mt-12 grid gap-6 md:grid-cols-2">
-            {% for item in collection %}
-                {% include 'partials/blog-card.html.twig' with { item: item } %}
+            {% for item in posts %}
+                {# index — щоб тон заглушки чергувався й у дві колонки виходила шахівниця #}
+                {% include 'partials/blog-card.html.twig' with { item: item, index: loop.index0 } %}
             {% endfor %}
         </div>
 
-        {% include 'partials/pagination.html.twig' with {
-            pagination: collection.params.pagination,
-            base_url: page.url
-        } %}
+        {# Результати пошуку приходять одним шматком (page.collection(params, false)),
+           різати їх на сторінки нічим — тому пагінація лише у звичайному режимі #}
+        {% if not searching %}
+            {% include 'partials/pagination.html.twig' with {
+                pagination: posts.params.pagination,
+                base_url: page.url
+            } %}
+        {% endif %}
     {% else %}
-        <p class="mt-12 text-xl text-slate">{{ 'THEME_F1MONKEY.NO_POSTS'|t }}</p>
+        <p class="mt-12 text-xl text-slate">
+            {{ searching ? 'THEME_F1MONKEY.NOTHING_FOUND'|t : 'THEME_F1MONKEY.NO_POSTS'|t }}
+        </p>
     {% endif %}
 {% endblock %}

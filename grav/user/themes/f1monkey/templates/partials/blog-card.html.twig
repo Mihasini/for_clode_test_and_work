@@ -1,34 +1,67 @@
 {#
-    Картка запису в списку. Приймає `item` — сторінку запису.
+    Картка запису в списку. Приймає `item` — сторінку запису — і `index`
+    (порядковий номер у сітці, від нуля) для чергування тону заглушки.
     Змінну навмисно не звемо `page`: інакше вона перекрила б глобальну
     сторінку блогу, і посилання «скинути фільтр» поїхало б у нікуди.
 #}
-<article class="card flex flex-col">
-    <p class="font-mono text-xs uppercase tracking-label text-smoke">
-        <time datetime="{{ item.date|date('Y-m-d') }}">{{ item.date|date('d.m.Y') }}</time>
-    </p>
+{# Обкладинка — просто перше зображення в теці запису, окремого поля немає:
+   те саме правило, що й на сторінці запису (item.html.twig) #}
+{% set cover = item.media.images|first %}
+{% set tone = index|default(0) is even ? 'bg-carbon text-paper' : 'bg-mint text-carbon' %}
 
-    <h2 class="mt-6 font-sans text-2xl font-semibold uppercase tracking-text">
-        <a href="{{ item.url|e }}" class="hover:bg-mint">{{ item.title|e }}</a>
-    </h2>
+{#
+    Клас .card тут не годиться: у ньому власні падінги, а обкладинка має йти
+    від краю до краю. Тому падінг живе на внутрішньому блоці, а зовнішній
+    лише округлює й підрізає кути (overflow-hidden).
+#}
+<article class="flex flex-col overflow-hidden rounded-card bg-paper md:rounded-card-lg">
+    {# Веде туди ж, що й заголовок, тож для екранного читача це дубль: ховаємо #}
+    <a href="{{ item.url|e }}" tabindex="-1" aria-hidden="true">
+        {% if cover %}
+            {{ cover.cropZoom(800, 450).html(item.title, '', 'w-full')|raw }}
+        {% else %}
+            {#
+                Заглушка замість фото: типографічне поле в тоні теми.
+                Досить покласти будь-яке зображення в теку запису (хоч із
+                адмінки) — воно стане обкладинкою, шаблон правити не треба.
+            #}
+            {% set label = item.taxonomy.tag|default([])|first|default(site.title) %}
+            <div class="flex aspect-video flex-col justify-between p-6 md:p-8 {{ tone }}">
+                <span class="font-mono text-xs uppercase tracking-label">{{ item.date|date('Y') }}</span>
+                <span class="break-words font-display uppercase leading-none text-3xl md:text-display-sm">
+                    {{ label|e }}
+                </span>
+            </div>
+        {% endif %}
+    </a>
 
-    {% if item.summary %}
-        {# striptags: у картці потрібен рівний текстовий блок, а не розмітка з markdown #}
-        <p class="mt-4 text-slate">{{ item.summary|striptags|trim|e }}</p>
-    {% endif %}
-
-    {% if item.taxonomy.tag %}
-        <p class="mt-6 flex flex-wrap gap-2">
-            {% for tag in item.taxonomy.tag %}
-                <a href="{{ item.parent.url }}/tag{{ config.system.param_sep }}{{ tag|url_encode }}" class="tag">
-                    {{ tag|e }}
-                </a>
-            {% endfor %}
+    <div class="flex flex-1 flex-col p-8 md:p-10">
+        <p class="font-mono text-xs uppercase tracking-label text-smoke">
+            <time datetime="{{ item.date|date('Y-m-d') }}">{{ item.date|date('d.m.Y') }}</time>
         </p>
-    {% endif %}
 
-    {# mt-auto притискає кнопку до низу, щоб у сусідніх картках вони збіглися #}
-    <p class="mt-auto pt-8">
-        <a href="{{ item.url|e }}" class="btn-ghost">{{ 'THEME_F1MONKEY.READ_MORE'|t }}</a>
-    </p>
+        <h2 class="mt-4 font-sans text-2xl font-semibold uppercase tracking-text">
+            <a href="{{ item.url|e }}" class="hover:bg-mint">{{ item.title|e }}</a>
+        </h2>
+
+        {% if item.summary %}
+            {# striptags: у картці потрібен рівний текстовий блок, а не розмітка з markdown #}
+            <p class="mt-4 text-slate">{{ item.summary|striptags|trim|e }}</p>
+        {% endif %}
+
+        {% if item.taxonomy.tag %}
+            <p class="mt-6 flex flex-wrap gap-2">
+                {% for tag in item.taxonomy.tag %}
+                    <a href="{{ item.parent.url }}/tag{{ config.system.param_sep }}{{ tag|url_encode }}" class="tag">
+                        {{ tag|e }}
+                    </a>
+                {% endfor %}
+            </p>
+        {% endif %}
+
+        {# mt-auto притискає кнопку до низу, щоб у сусідніх картках вони збіглися #}
+        <p class="mt-auto pt-8">
+            <a href="{{ item.url|e }}" class="btn-ghost">{{ 'THEME_F1MONKEY.READ_MORE'|t }}</a>
+        </p>
+    </div>
 </article>
