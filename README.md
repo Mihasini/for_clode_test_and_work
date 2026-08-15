@@ -338,6 +338,57 @@ docker compose exec grav php bin/gpm install simplesearch -y # пошук по �
 і жодного переходу далі. Без `simplesearch` форма пошуку лишиться на місці, але
 запит нічого не змінить: сторінка щоразу показуватиме повний список.
 
+## Форк під новий проєкт
+
+Цей репозиторій — кістяк: із нього починається кожен наступний сайт, а вдалі
+рішення з проєктів повертаються назад сюди. Проєкт не успадковує тему через
+механізм Grav, а форкається цілком: половина повторно використовуваної роботи
+лежить поруч із темою — docker-стек, Caddy, правові сторінки, форма, конфіги.
+
+```powershell
+git clone https://github.com/Mihasini/for_clode_test_and_work.git my-project
+cd my-project
+git remote rename origin upstream        # кістяк лишається upstream, звідси тільки читаємо
+git remote add origin <репозиторій проєкту>
+git push -u origin main
+```
+
+Що обов'язково змінюється після клону:
+
+1. **`name:` у `docker-compose.yml`** (зараз `pisochnica`). Від нього залежать
+   імена томів: два проєкти з однаковим `name` на одній машині поділять базу
+   й кеш форуму. Це пункт номер один, а не косметика.
+2. `GRAV_HOST` і `FLARUM_HOST` у `.env` — інакше `*.localhost` конфліктують
+   із уже піднятим стендом.
+3. `.env` з `.env.example`, свої паролі, `docker compose up -d`.
+4. Плагіни з GPM (`pagination`, `simplesearch`) — тека `user/plugins/`
+   у `.gitignore`, див. розділ вище.
+5. Демо-контент під заміну: записи `pages/02.blog/*`, `pages/03.typography`,
+   наповнення `01.home`. Правові сторінки, форма й cookies лишаються.
+6. Підвал і контакти — адмінка, **Теми → F1Monkey**. Там же текст дисклеймера,
+   власник і маршрут політики для смужки про cookies.
+7. Стилі: токени в `tailwind.config.js`, компоненти в `css/site.css`,
+   потім `npm run build`.
+8. Не потрібен форум — прибрати сервіси `flarum` і `mariadb` з compose, теку
+   `flarum/` і відповідний блок у `caddy/Caddyfile`.
+
+Обмін змінами в обидва боки — cherry-pick, не merge: гілки розходяться назавжди.
+
+```powershell
+git fetch upstream; git cherry-pick <sha>          # виправлення з кістяка в проєкт
+```
+```powershell
+# у клоні кістяка: забрати вдале рішення з проєкту назад
+git remote add my-project <репозиторій проєкту>; git fetch my-project
+git cherry-pick <sha>
+```
+
+**Тему не перейменовувати.** Перейменування зачіпає теку, `f1monkey.yaml`,
+ім'я класу в `f1monkey.php`, `slug` у `blueprints.yaml`, `package.json`,
+`pages.theme` у `system.yaml` і префікс усіх ключів `THEME_F1MONKEY.*` — після
+цього cherry-pick між кістяком і проєктом перестає накладатися чисто. Ім'я теми
+на сайті ніде не видно; ідентичність проєкту живе в контенті й токенах.
+
 ## Корисне
 
 ```powershell
