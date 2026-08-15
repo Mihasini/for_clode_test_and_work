@@ -989,6 +989,19 @@ body {
   --tw-ring-offset-color: #e5e5e5;
 }
 
+/*
+     * На чорних поверхнях (підвал, інверсні картки) чорне кільце невидиме —
+     * там міняємо його місцями з тлом. Інакше клавіатурний фокус у підвалі
+     * просто губиться.
+     */
+
+footer :focus-visible,
+    .card-inverted :focus-visible {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity, 1));
+  --tw-ring-offset-color: #000000;
+}
+
 ::-moz-selection {
   --tw-bg-opacity: 1;
   background-color: rgb(255 241 0 / var(--tw-bg-opacity, 1));
@@ -1748,6 +1761,30 @@ body {
   color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 
+/* Клікабельний тег: у списку записів і в фільтрі журналу */
+
+a.tag {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+a.tag:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+/* Обраний фільтр — тим самим прийомом, що й .nav-pill.is-active */
+
+.tag.is-active {
+  --tw-bg-opacity: 1;
+  background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
+  --tw-text-opacity: 1;
+  color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
 .card {
   border-radius: 24px;
   --tw-bg-opacity: 1;
@@ -1789,6 +1826,37 @@ body {
   --tw-text-opacity: 1;
   color: rgb(151 151 151 / var(--tw-text-opacity, 1));
 }
+
+/*
+     * Підпис згоди у формі приходить із markdown, тому класи на посилання
+     * там не почепиш — стилізуємо їх звідси.
+     */
+
+.consent-label a {
+  text-decoration-line: underline;
+  text-underline-offset: 4px;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.consent-label a:hover {
+  --tw-text-opacity: 1;
+  color: rgb(68 68 68 / var(--tw-text-opacity, 1));
+}
+
+/*
+     * Два класи з розмітки плагіна form. Власного CSS плагіна ми не підключаємо
+     * (built_in_css: false), тож мінімальний вигляд задаємо тут.
+     */
+
+.required {
+  margin-left: 0.125rem;
+  --tw-text-opacity: 1;
+  color: rgb(68 68 68 / var(--tw-text-opacity, 1));
+}
+
+/* Обгортку поля, що не пройшло валідацію, плагін позначає .has-errors */
 
 /* Посилання «пропустити навігацію»: видиме лише з клавіатури */
 
@@ -1832,6 +1900,18 @@ body {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 .visible {
   visibility: visible;
 }
@@ -1850,6 +1930,15 @@ body {
 
 .inset-0 {
   inset: 0px;
+}
+
+.inset-x-0 {
+  left: 0px;
+  right: 0px;
+}
+
+.bottom-0 {
+  bottom: 0px;
 }
 
 .left-0 {
@@ -1873,12 +1962,24 @@ body {
   margin-bottom: 3rem;
 }
 
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
 
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
 .ml-6 {
   margin-left: 1.5rem;
+}
+
+.mt-0\.5 {
+  margin-top: 0.125rem;
 }
 
 .mt-10 {
@@ -1903,6 +2004,10 @@ body {
 
 .mt-4 {
   margin-top: 1rem;
+}
+
+.mt-5 {
+  margin-top: 1.25rem;
 }
 
 .mt-6 {
@@ -1941,12 +2046,24 @@ body {
   display: none;
 }
 
+.aspect-video {
+  aspect-ratio: 16 / 9;
+}
+
 .h-12 {
   height: 3rem;
 }
 
 .h-24 {
   height: 6rem;
+}
+
+.h-5 {
+  height: 1.25rem;
+}
+
+.w-5 {
+  width: 1.25rem;
 }
 
 .w-full {
@@ -1981,12 +2098,24 @@ body {
   max-width: 36rem;
 }
 
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+.shrink-0 {
+  flex-shrink: 0;
+}
+
 .flex-col {
   flex-direction: column;
 }
 
 .flex-wrap {
   flex-wrap: wrap;
+}
+
+.items-start {
+  align-items: flex-start;
 }
 
 .items-center {
@@ -2013,6 +2142,10 @@ body {
   gap: 0.5rem;
 }
 
+.gap-3 {
+  gap: 0.75rem;
+}
+
 .gap-4 {
   gap: 1rem;
 }
@@ -2021,13 +2154,18 @@ body {
   gap: 1.5rem;
 }
 
-.gap-8 {
-  gap: 2rem;
+.gap-x-6 {
+  -moz-column-gap: 1.5rem;
+       column-gap: 1.5rem;
 }
 
 .gap-x-8 {
   -moz-column-gap: 2rem;
        column-gap: 2rem;
+}
+
+.gap-y-2 {
+  row-gap: 0.5rem;
 }
 
 .gap-y-3 {
@@ -2070,8 +2208,20 @@ body {
   border-left-width: 1px;
 }
 
+.border-l-2 {
+  border-left-width: 2px;
+}
+
+.border-l-4 {
+  border-left-width: 4px;
+}
+
 .border-t {
   border-top-width: 1px;
+}
+
+.border-t-1\.5 {
+  border-top-width: 1.5px;
 }
 
 .border-ash {
@@ -2079,9 +2229,24 @@ body {
   border-color: rgb(198 198 198 / var(--tw-border-opacity, 1));
 }
 
+.border-carbon {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity, 1));
+}
+
 .border-slate {
   --tw-border-opacity: 1;
   border-color: rgb(68 68 68 / var(--tw-border-opacity, 1));
+}
+
+.border-voltage {
+  --tw-border-opacity: 1;
+  border-color: rgb(255 241 0 / var(--tw-border-opacity, 1));
+}
+
+.border-l-voltage {
+  --tw-border-opacity: 1;
+  border-left-color: rgb(255 241 0 / var(--tw-border-opacity, 1));
 }
 
 .bg-canvas {
@@ -2094,6 +2259,11 @@ body {
   background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
 }
 
+.bg-mint {
+  --tw-bg-opacity: 1;
+  background-color: rgb(209 255 202 / var(--tw-bg-opacity, 1));
+}
+
 .bg-paper {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
@@ -2103,9 +2273,22 @@ body {
   padding: 0.5rem;
 }
 
+.p-6 {
+  padding: 1.5rem;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .px-5 {
@@ -2133,6 +2316,21 @@ body {
   padding-bottom: 0.625rem;
 }
 
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
@@ -2142,8 +2340,16 @@ body {
   padding-bottom: 2.5rem;
 }
 
+.pl-3 {
+  padding-left: 0.75rem;
+}
+
 .pl-4 {
   padding-left: 1rem;
+}
+
+.pt-12 {
+  padding-top: 3rem;
 }
 
 .pt-6 {
@@ -2175,6 +2381,12 @@ body {
 .text-3xl {
   font-size: 40px;
   line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.text-base {
+  font-size: 16px;
+  line-height: 1.55;
   letter-spacing: -0.02em;
 }
 
@@ -2224,6 +2436,18 @@ body {
 
 .uppercase {
   text-transform: uppercase;
+}
+
+.not-italic {
+  font-style: normal;
+}
+
+.leading-none {
+  line-height: 1;
+}
+
+.leading-relaxed {
+  line-height: 1.625;
 }
 
 .tracking-display {
@@ -2286,6 +2510,16 @@ body {
   transition-duration: 150ms;
 }
 
+.placeholder\:text-smoke::-moz-placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(151 151 151 / var(--tw-text-opacity, 1));
+}
+
+.placeholder\:text-smoke::placeholder {
+  --tw-text-opacity: 1;
+  color: rgb(151 151 151 / var(--tw-text-opacity, 1));
+}
+
 .first\:pl-0:first-child {
   padding-left: 0px;
 }
@@ -2308,6 +2542,21 @@ body {
 .hover\:text-paper:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+
+.hover\:text-slate:hover {
+  --tw-text-opacity: 1;
+  color: rgb(68 68 68 / var(--tw-text-opacity, 1));
+}
+
+.focus\:border-carbon:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity, 1));
+}
+
+.focus\:ring-carbon:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(0 0 0 / var(--tw-ring-opacity, 1));
 }
 
 .group:focus-within .group-focus-within\:block {
@@ -2364,6 +2613,14 @@ body {
     gap: 0px;
   }
 
+  .md\:gap-10 {
+    gap: 2.5rem;
+  }
+
+  .md\:gap-12 {
+    gap: 3rem;
+  }
+
   .md\:divide-x > :not([hidden]) ~ :not([hidden]) {
     --tw-divide-x-reverse: 0;
     border-right-width: calc(1px * var(--tw-divide-x-reverse));
@@ -2377,6 +2634,14 @@ body {
 
   .md\:rounded-card-lg {
     border-radius: 32px;
+  }
+
+  .md\:p-10 {
+    padding: 2.5rem;
+  }
+
+  .md\:p-8 {
+    padding: 2rem;
   }
 
   .md\:px-10 {

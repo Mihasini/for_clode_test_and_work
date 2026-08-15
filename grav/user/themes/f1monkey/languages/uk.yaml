@@ -7,11 +7,33 @@ THEME_F1MONKEY:
     HOME: 'Головна'
     FORUM: 'Форум'
 
+    # Підвал
+    CONTACTS: 'Контакти'
+    SHOW_ON_MAP: 'показати на карті'
+    SITE_OWNER: 'Власник сайту'
+    DISCLAIMER: 'Дисклеймер'
+    LEGAL: 'Правова інформація'
+
+    # Форма
+    FORM_VALIDATION_FAIL: 'Форму не надіслано — перевірте виділені поля.'
+
+    # Банер про cookies
+    COOKIE_TITLE: 'Повідомлення про cookies'
+    COOKIE_NOTICE: 'Сайт використовує файли cookie, щоб працювати коректно та розуміти, як ним користуються.'
+    COOKIE_ACCEPT: 'Зрозуміло'
+    COOKIE_MORE: 'Докладніше'
+
     # Журнал
     READ_MORE: 'Читати'
     NO_POSTS: 'Тут поки порожньо.'
-    FILTERED_BY_TAG: 'Записи з тегом'
     RESET_FILTER: 'Показати всі'
+    TAG_FILTER: 'Фільтр за тегами'
+    ALL_TAGS: 'Усі'
+    SEARCH: 'Пошук по журналу'
+    SEARCH_PLACEHOLDER: 'Слово або тег'
+    SEARCH_SUBMIT: 'Знайти'
+    SEARCH_FOUND: 'Знайдено'
+    NOTHING_FOUND: 'Нічого не знайшли. Спробуйте інше слово або оберіть тег.'
     PAGINATION: 'Сторінки списку'
     PREV_PAGE: 'Попередня сторінка'
     NEXT_PAGE: 'Наступна сторінка'

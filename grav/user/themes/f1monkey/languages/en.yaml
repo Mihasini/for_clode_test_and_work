@@ -7,11 +7,33 @@ THEME_F1MONKEY:
     HOME: 'Home'
     FORUM: 'Forum'
 
+    # Footer
+    CONTACTS: 'Contacts'
+    SHOW_ON_MAP: 'show on map'
+    SITE_OWNER: 'Site owner'
+    DISCLAIMER: 'Disclaimer'
+    LEGAL: 'Legal'
+
+    # Form
+    FORM_VALIDATION_FAIL: 'The form was not sent — check the highlighted fields.'
+
+    # Cookie notice
+    COOKIE_TITLE: 'Cookie notice'
+    COOKIE_NOTICE: 'This site uses cookies to work properly and to understand how it is used.'
+    COOKIE_ACCEPT: 'Got it'
+    COOKIE_MORE: 'Learn more'
+
     # Blog
     READ_MORE: 'Read'
     NO_POSTS: 'Nothing here yet.'
-    FILTERED_BY_TAG: 'Posts tagged'
     RESET_FILTER: 'Show all'
+    TAG_FILTER: 'Filter by tag'
+    ALL_TAGS: 'All'
+    SEARCH: 'Search the journal'
+    SEARCH_PLACEHOLDER: 'Word or tag'
+    SEARCH_SUBMIT: 'Search'
+    SEARCH_FOUND: 'Found'
+    NOTHING_FOUND: 'Nothing found. Try another word or pick a tag.'
     PAGINATION: 'List pages'
     PREV_PAGE: 'Previous page'
     NEXT_PAGE: 'Next page'

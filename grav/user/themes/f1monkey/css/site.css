@@ -57,6 +57,16 @@
         @apply outline-none ring-2 ring-carbon ring-offset-2 ring-offset-canvas;
     }
 
+    /*
+     * На чорних поверхнях (підвал, інверсні картки) чорне кільце невидиме —
+     * там міняємо його місцями з тлом. Інакше клавіатурний фокус у підвалі
+     * просто губиться.
+     */
+    footer :focus-visible,
+    .card-inverted :focus-visible {
+        @apply ring-paper ring-offset-carbon;
+    }
+
     ::selection {
         @apply bg-voltage text-carbon;
     }
@@ -99,6 +109,16 @@
                uppercase tracking-label text-carbon;
     }
 
+    /* Клікабельний тег: у списку записів і в фільтрі журналу */
+    a.tag {
+        @apply transition-colors hover:bg-carbon hover:text-paper;
+    }
+
+    /* Обраний фільтр — тим самим прийомом, що й .nav-pill.is-active */
+    .tag.is-active {
+        @apply bg-carbon text-paper;
+    }
+
     .card {
         @apply rounded-card bg-paper p-8 md:rounded-card-lg md:p-12;
     }
@@ -110,6 +130,27 @@
     /* Дрібний підпис-мітка над блоком: моно, капс, розріджений */
     .eyebrow {
         @apply font-mono text-xs uppercase tracking-label text-smoke;
+    }
+
+    /*
+     * Підпис згоди у формі приходить із markdown, тому класи на посилання
+     * там не почепиш — стилізуємо їх звідси.
+     */
+    .consent-label a {
+        @apply underline underline-offset-4 transition-colors hover:text-slate;
+    }
+
+    /*
+     * Два класи з розмітки плагіна form. Власного CSS плагіна ми не підключаємо
+     * (built_in_css: false), тож мінімальний вигляд задаємо тут.
+     */
+    .required {
+        @apply ml-0.5 text-slate;
+    }
+
+    /* Обгортку поля, що не пройшло валідацію, плагін позначає .has-errors */
+    .has-errors :is(input, textarea) {
+        @apply border-carbon;
     }
 
     /* Посилання «пропустити навігацію»: видиме лише з клавіатури */
