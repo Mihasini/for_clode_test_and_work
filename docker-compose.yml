@@ -1,12 +1,14 @@
 name: pisochnica
 
 services:
-  # Reverse-proxy: роздає обидва сайти за іменами на одному 80-му порту
+  # Reverse-proxy: роздає обидва сайти за іменами на одному порту.
+  # Порти публікації винесені в .env: на одній машині може крутитися
+  # кілька стендів, а 80-й порт дістається лише одному з них.
   caddy:
     image: caddy:2-alpine
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "${HTTP_PORT:-80}:80"
     environment:
       GRAV_HOST: ${GRAV_HOST}
       FLARUM_HOST: ${FLARUM_HOST}
@@ -29,7 +31,7 @@ services:
     ports:
       # прямий доступ повз Caddy — для REST API, MCP і curl,
       # щоб не залежати від резолву *.localhost поза браузером
-      - "8080:80"
+      - "${GRAV_PORT:-8080}:80"
     volumes:
       # редагуємо руками, лежить у git
       - ./grav/user:/var/www/html/user
@@ -80,7 +82,7 @@ services:
     image: axllent/mailpit:latest
     restart: unless-stopped
     ports:
-      - "8025:8025"
+      - "${MAILPIT_PORT:-8025}:8025"
 
   mariadb:
     image: mariadb:11

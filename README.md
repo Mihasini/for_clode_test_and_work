@@ -360,17 +360,34 @@ git push -u origin main
    й кеш форуму. Це пункт номер один, а не косметика.
 2. `GRAV_HOST` і `FLARUM_HOST` у `.env` — інакше `*.localhost` конфліктують
    із уже піднятим стендом.
-3. `.env` з `.env.example`, свої паролі, `docker compose up -d`.
-4. Плагіни з GPM (`pagination`, `simplesearch`) — тека `user/plugins/`
-   у `.gitignore`, див. розділ вище.
-5. Демо-контент під заміну: записи `pages/02.blog/*`, `pages/03.typography`,
+3. `HTTP_PORT`, `GRAV_PORT`, `MAILPIT_PORT` у `.env`. Різні домени від конфлікту
+   не рятують: порт займає той стенд, який піднявся першим, другий просто не
+   стартує. Порт 80 дістається комусь одному.
+4. `.env` з `.env.example`, свої паролі, `docker compose up -d`.
+5. Плагіни з GPM — `devtools`, `pagination`, `simplesearch`:
+
+   ```powershell
+   docker compose exec grav php bin/gpm install devtools pagination simplesearch -y
+   ```
+
+   Решту (`admin2`, `api`, `form`, `login`, `email`…) і тему `quark2` entrypoint
+   досіває з образу сам: у клоні `user/` уже не порожній, тож звичайний засів не
+   спрацьовує, а `user/plugins/` у `.gitignore` — див. розділ вище.
+6. Обліковий запис адміністратора — його теж немає в git (`user/accounts/`):
+
+   ```powershell
+   docker compose exec grav php bin/plugin login newuser -u admin -p "<пароль>" -e "<пошта>" -l uk -P b -N Admin -s enabled
+   ```
+7. `GRAV_API_KEY` — ключ старого стенда в новому не працює, генерується заново
+   (див. розділ про API вище) і йде в `.env` та `.mcp.json`.
+8. Демо-контент під заміну: записи `pages/02.blog/*`, `pages/03.typography`,
    наповнення `01.home`. Правові сторінки, форма й cookies лишаються.
-6. Підвал і контакти — адмінка, **Теми → F1Monkey**. Там же текст дисклеймера,
+9. Підвал і контакти — адмінка, **Теми → F1Monkey**. Там же текст дисклеймера,
    власник і маршрут політики для смужки про cookies.
-7. Стилі: токени в `tailwind.config.js`, компоненти в `css/site.css`,
-   потім `npm run build`.
-8. Не потрібен форум — прибрати сервіси `flarum` і `mariadb` з compose, теку
-   `flarum/` і відповідний блок у `caddy/Caddyfile`.
+10. Стилі: токени в `tailwind.config.js`, компоненти в `css/site.css`,
+    потім `npm run build`.
+11. Не потрібен форум — прибрати сервіси `flarum` і `mariadb` з compose, теку
+    `flarum/` і відповідний блок у `caddy/Caddyfile`.
 
 Обмін змінами в обидва боки — cherry-pick, не merge: гілки розходяться назавжди.
 
