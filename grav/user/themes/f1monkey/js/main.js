@@ -41,3 +41,55 @@
         }
     });
 })();
+
+/**
+ * Смужка про cookies.
+ *
+ * Вибір зберігаємо в localStorage, а не в cookie: сервер про згоду нічого не
+ * знає, тож cookie їздила б у кожному запиті намарно — та й cookie заради
+ * банера про cookie виглядає дивно.
+ *
+ * Смужка лежить у розмітці прихованою і показується вже тут. Тому в тих, хто
+ * погодився, вона не встигає блимнути — навіть якщо HTML прийшов із кешу.
+ */
+(function () {
+    'use strict';
+
+    var STORAGE_KEY = 'f1monkey.cookie-notice';
+
+    var notice = document.querySelector('[data-cookie-notice]');
+    var accept = notice ? notice.querySelector('[data-cookie-accept]') : null;
+
+    if (!notice || !accept) {
+        return;
+    }
+
+    // У приватному режимі деяких браузерів localStorage кидає виняток —
+    // через це не має падати решта скрипта, тому обидва звертання в try/catch
+    function isAccepted() {
+        try {
+            return window.localStorage.getItem(STORAGE_KEY) === 'yes';
+        } catch (error) {
+            return false;
+        }
+    }
+
+    function remember() {
+        try {
+            window.localStorage.setItem(STORAGE_KEY, 'yes');
+        } catch (error) {
+            // Не змогли запам'ятати — банер просто з'явиться наступного разу
+        }
+    }
+
+    if (isAccepted()) {
+        return;
+    }
+
+    notice.classList.remove('hidden');
+
+    accept.addEventListener('click', function () {
+        notice.classList.add('hidden');
+        remember();
+    });
+})();

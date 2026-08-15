@@ -39,3 +39,73 @@ form:
                 0: PLUGIN_ADMIN.DISABLED
             validate:
                 type: bool
+
+        footer_contacts:
+            type: section
+            title: Підвал — контакти
+            underline: true
+            fields:
+                footer.email:
+                    type: email
+                    label: Пошта
+                    help: 'Порожнє поле — рядок у підвалі не виводиться'
+                    validate:
+                        type: email
+
+                footer.phone:
+                    type: text
+                    label: Телефон
+                    help: 'Показується як є; для tel: пробіли й дужки прибираються самі'
+
+                footer.address:
+                    type: text
+                    label: Адреса
+                    help: 'Клік веде на карту'
+
+                footer.map_url:
+                    type: text
+                    label: Посилання на карту
+                    help: 'Готове посилання з Google Maps («Поділитися»). Якщо порожнє — будується пошук за адресою'
+
+        footer_legal:
+            type: section
+            title: Підвал — правова інформація
+            underline: true
+            fields:
+                footer.disclaimer:
+                    type: textarea
+                    label: Дисклеймер
+                    rows: 5
+
+                footer.owner:
+                    type: textarea
+                    label: Відомості про власника сайту
+                    rows: 5
+                    help: 'Назва, форма власності, реєстраційні дані — кожен пункт з нового рядка'
+
+        cookie_notice:
+            type: section
+            title: Банер про cookies
+            underline: true
+            fields:
+                cookie.enabled:
+                    type: toggle
+                    label: Показувати банер
+                    highlight: 1
+                    default: 1
+                    options:
+                        1: PLUGIN_ADMIN.ENABLED
+                        0: PLUGIN_ADMIN.DISABLED
+                    validate:
+                        type: bool
+
+                cookie.text:
+                    type: textarea
+                    label: Текст
+                    rows: 3
+                    help: 'Порожнє поле — береться типовий текст теми'
+
+                cookie.policy_route:
+                    type: text
+                    label: Посилання «Докладніше»
+                    help: 'Адреса сторінки з політикою конфіденційності. Порожнє — посилання не показується'

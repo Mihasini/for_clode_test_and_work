@@ -1,0 +1,27 @@
+title: Сторінка
+'@extends':
+    type: default
+    context: blueprints://pages
+
+form:
+  fields:
+    tabs:
+      fields:
+        options:
+          fields:
+            footer_menu:
+              type: section
+              title: Підвал
+              underline: true
+              fields:
+                header.footer_menu:
+                  type: toggle
+                  label: Посилання в підвалі
+                  help: 'Для правових сторінок. Їх зазвичай ховають з головного меню (Видима → вимкнено), а тут вони лишаються доступними'
+                  highlight: 0
+                  default: 0
+                  options:
+                    1: PLUGIN_ADMIN.YES
+                    0: PLUGIN_ADMIN.NO
+                  validate:
+                    type: bool

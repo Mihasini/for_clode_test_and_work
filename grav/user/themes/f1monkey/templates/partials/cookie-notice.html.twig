@@ -1,0 +1,36 @@
+{#
+    Смужка про cookies. Своя, а не плагін: єдиний у GPM (cookieconsent) востаннє
+    оновлювався 2018 року й заявляє сумісність лише з Grav 1.7.
+
+    Банер інформаційний, тому свідомо не модальний: він не перехоплює фокус і не
+    блокує сторінку — таке робиться лише там, де від вибору щось залежить.
+
+    У розмітку йде прихованим (`hidden`), показує його JS і лише тим, хто ще не
+    натискав «Зрозуміло». Тому смужка не блимає на кожному переході й не оживає
+    з кешованого HTML у тих, хто вже погодився.
+
+    Вмикається й редагується в адмінці: Теми → F1Monkey → Банер про cookies.
+#}
+{% set c = config.theme.cookie %}
+
+{% if c.enabled %}
+    <div data-cookie-notice
+         class="fixed inset-x-0 bottom-0 z-40 hidden border-t-1.5 border-carbon bg-paper"
+         role="region"
+         aria-label="{{ 'THEME_F1MONKEY.COOKIE_TITLE'|t }}">
+        <div class="mx-auto flex max-w-content flex-col gap-4 px-6 py-5 md:flex-row md:items-center md:justify-between md:gap-10">
+            <p class="text-sm leading-relaxed text-carbon">
+                {{ (c.text ?: 'THEME_F1MONKEY.COOKIE_NOTICE'|t)|e }}
+                {% if c.policy_route %}
+                    <a href="{{ url(c.policy_route)|e }}" class="underline underline-offset-4 transition-colors hover:text-slate">
+                        {{ 'THEME_F1MONKEY.COOKIE_MORE'|t }}
+                    </a>
+                {% endif %}
+            </p>
+
+            <button type="button" data-cookie-accept class="btn-solid shrink-0">
+                {{ 'THEME_F1MONKEY.COOKIE_ACCEPT'|t }}
+            </button>
+        </div>
+    </div>
+{% endif %}

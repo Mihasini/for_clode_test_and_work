@@ -1,24 +1,111 @@
 {#
     Підвал — інверсний чорний блок. У системі зразка це єдиний спосіб дати
     глибину: тіней немає, працює тільки контраст поверхонь.
+
+    Контакти, дисклеймер і власник сайту приходять з конфіга теми
+    (Теми → F1Monkey). Порожнє поле = блок не рендериться.
+
+    Правові сторінки збираються самі: будь-яка сторінка з `footer_menu: true`
+    у фронтматері потрапляє в нижній ряд. Через `pages.children`, а не
+    `.visible` — сторінки навмисно приховані з головного меню.
 #}
+{% set f = config.theme.footer %}
+
+{% set legal = [] %}
+{% for p in pages.children %}
+    {% if p.header.footer_menu %}
+        {% set legal = legal|merge([p]) %}
+    {% endif %}
+{% endfor %}
+
+{% set link_class = 'text-paper underline underline-offset-4 transition-colors hover:text-mint' %}
+
 <footer class="bg-carbon text-paper">
     <div class="mx-auto max-w-content px-6 py-16 md:py-24">
         <p class="break-words font-display uppercase text-display-sm md:text-display">
             {{ config.site.title|e }}
         </p>
 
-        <div class="mt-12 flex flex-col gap-8 border-t border-slate pt-8 md:flex-row md:items-center md:justify-between">
-            <nav aria-label="{{ 'THEME_F1MONKEY.MENU'|t }}">
-                {% include 'partials/navigation.html.twig' with {
-                    list_class: 'flex flex-wrap items-center gap-x-8 gap-y-3',
-                    link_class: 'font-sans text-sm font-medium uppercase tracking-label text-paper transition-colors hover:text-mint',
-                    active_class: 'text-mint',
-                    mode: 'flat'
-                } %}
-            </nav>
+        <div class="mt-12 grid gap-10 border-t border-slate pt-12 md:grid-cols-3 md:gap-12">
+            {% if f.email or f.phone or f.address %}
+                <div>
+                    <p class="eyebrow">{{ 'THEME_F1MONKEY.CONTACTS'|t }}</p>
+                    <ul class="mt-5 flex flex-col gap-3 not-italic">
+                        {% if f.email %}
+                            <li>
+                                <a href="mailto:{{ f.email|e }}" class="{{ link_class }}">{{ f.email|e }}</a>
+                            </li>
+                        {% endif %}
 
-            <p class="font-mono text-xs uppercase tracking-label text-smoke">
+                        {% if f.phone %}
+                            {# У tel: не можна ні пробілів, ні дужок — чистимо, а показуємо як записано #}
+                            <li>
+                                <a href="tel:{{ f.phone|replace({' ': '', '(': '', ')': '', '-': ''})|e }}" class="{{ link_class }}">
+                                    {{ f.phone|e }}
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% if f.address %}
+                            <li>
+                                {# Готове посилання з «Поділитися» має пріоритет; інакше — пошук за адресою #}
+                                <a href="{{ (f.map_url ?: 'https://www.google.com/maps/search/?api=1&query=' ~ f.address|url_encode)|e }}"
+                                   class="{{ link_class }}"
+                                   target="_blank"
+                                   rel="noopener noreferrer">
+                                    {{ f.address|e }}
+                                    <span class="sr-only">— {{ 'THEME_F1MONKEY.SHOW_ON_MAP'|t }}</span>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            {% endif %}
+
+            {% if f.owner %}
+                <div>
+                    <p class="eyebrow">{{ 'THEME_F1MONKEY.SITE_OWNER'|t }}</p>
+                    <p class="mt-5 text-sm leading-relaxed text-ash">{{ f.owner|nl2br }}</p>
+                </div>
+            {% endif %}
+
+            {% if f.disclaimer %}
+                <div>
+                    <p class="eyebrow">{{ 'THEME_F1MONKEY.DISCLAIMER'|t }}</p>
+                    <p class="mt-5 text-sm leading-relaxed text-ash">{{ f.disclaimer|nl2br }}</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="mt-12 border-t border-slate pt-8">
+            <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+                <nav aria-label="{{ 'THEME_F1MONKEY.MENU'|t }}">
+                    {% include 'partials/navigation.html.twig' with {
+                        list_class: 'flex flex-wrap items-center gap-x-8 gap-y-3',
+                        link_class: 'font-sans text-sm font-medium uppercase tracking-label text-paper transition-colors hover:text-mint',
+                        active_class: 'text-mint',
+                        mode: 'flat'
+                    } %}
+                </nav>
+
+                {% if legal|length %}
+                    <nav aria-label="{{ 'THEME_F1MONKEY.LEGAL'|t }}">
+                        <ul class="flex flex-wrap items-center gap-x-6 gap-y-2">
+                            {% for p in legal %}
+                                <li>
+                                    {# Активний пункт задаємо замість text-smoke, а не поруч: у зібраному CSS
+                                       перемагає не той клас, що стоїть у розмітці другим #}
+                                    <a href="{{ p.url|e }}" class="font-mono text-xs uppercase tracking-label transition-colors hover:text-mint {{ p.active ? 'text-mint' : 'text-smoke' }}">
+                                        {{ p.menu|e }}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </nav>
+                {% endif %}
+            </div>
+
+            <p class="mt-8 font-mono text-xs uppercase tracking-label text-smoke">
                 © {{ 'now'|date('Y') }} · {{ 'THEME_F1MONKEY.POWERED_BY'|t }}
                 <a href="https://getgrav.org" class="text-paper underline underline-offset-4 hover:text-mint">Grav</a>
             </p>

@@ -84,6 +84,11 @@
     {% include 'partials/footer.html.twig' %}
 {% endblock %}
 
+{# Окремим блоком — щоб тема-нащадок могла прибрати банер, не чіпаючи підвал #}
+{% block cookie_notice %}
+    {% include 'partials/cookie-notice.html.twig' %}
+{% endblock %}
+
 {% block bottom %}
     {{ assets.js('bottom')|raw }}
 {% endblock %}
